@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="robot_lab">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Robot podium, centered at the world origin. Footprint after the
+         model's 0.01 mesh scale is 0.45m x 0.45m, top surface at z=0.97m.
+         The irb140 is spawned mounted on top of it by gazebo.launch.py
+         (see the spawn_robot_node -z argument there). -->
+    <include>
+      <uri>model://abb_irb140_description/models/robot_lab_podium</uri>
+      <name>robot_lab_podium</name>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <!-- Robot lab table, placed in front of the podium (+X, the direction
+         the irb140's arm reaches in) with a 20cm gap between the nearest
+         faces of the two footprints:
+           podium half-depth (0.45m / 2)        = 0.225
+           + requested separation                = 0.20
+           + table depth (local x: -0.754 to 0)  = 0.754
+           = table pose x                        = 1.179 -->
+    <include>
+      <uri>model://abb_irb140_description/models/robot_lab_table</uri>
+      <name>robot_lab_table</name>
+      <pose>1.179 0 0 0 0 0</pose>
+    </include>
+  </world>
+</sdf>

@@ -17,142 +17,142 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/base_link.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/base_link.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
       <material name="abb_orange"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/base_link.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/base_link.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
     </collision>
     <!-- mass/inertia computed from the visual mesh geometry (tetrahedron
          decomposition, uniform density scaled so the 7 links sum to the
          published IRB140 mass of ~98 kg); see scratchpad/compute_inertials.py -->
     <inertial>
-      <origin xyz="-0.322989 0.001583 0.235924" rpy="0 0 0"/>
+      <origin xyz="-0.067289 0.00033 0.049151" rpy="0 0 0"/>
       <mass value="26.383023"/>
-      <inertia ixx="3.44385706" ixy="-0.00033128" ixz="0.24198261" iyy="5.51262191" iyz="0.02778120" izz="8.12294273"/>
+      <inertia ixx="0.149473" ixy="-0.000014" ixz="0.010503" iyy="0.239263" iyz="0.001206" izz="0.352558"/>
     </inertial>
   </link>
   <link name="link_1">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_1.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_1.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
       <material name="abb_orange"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_1.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_1.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
     </collision>
     <inertial>
-      <origin xyz="0.110652 0.172501 1.037020" rpy="0 0 0"/>
+      <origin xyz="0.023053 0.035938 0.216046" rpy="0 0 0"/>
       <mass value="34.629380"/>
-      <inertia ixx="7.90128229" ixy="-0.02301044" ixz="-0.81430517" iyy="7.16377559" iyz="-1.06976545" izz="7.09446846"/>
+      <inertia ixx="0.342938" ixy="-0.000999" ixz="-0.035343" iyy="0.310928" iyz="-0.046431" izz="0.30792"/>
     </inertial>
   </link>
   <link name="link_2">
     <visual>
-      <origin rpy="0 0 0" xyz="-0.28 0 -1.38"/>
+      <origin rpy="0 0 0" xyz="-0.058333 0 -0.2875"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_2.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_2.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
       <material name="abb_orange"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="-0.28 0 -1.38"/>
+      <origin rpy="0 0 0" xyz="-0.058333 0 -0.2875"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_2.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_2.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
     </collision>
     <inertial>
-      <origin xyz="-0.042708 -0.363912 0.786488" rpy="0 0 0"/>
+      <origin xyz="-0.008898 -0.075815 0.163852" rpy="0 0 0"/>
       <mass value="16.116764"/>
-      <inertia ixx="5.13228056" ixy="0.01700802" ixz="-0.06028269" iyy="4.33353603" iyz="0.59243849" izz="1.48090683"/>
+      <inertia ixx="0.222755" ixy="0.000738" ixz="-0.002616" iyy="0.188088" iyz="0.025713" izz="0.064275"/>
     </inertial>
   </link>
   <link name="link_3">
     <visual>
-      <origin rpy="0 0 0" xyz="-0.28 0 -2.8"/>
+      <origin rpy="0 0 0" xyz="-0.058333 0 -0.583333"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_3.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_3.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
       <material name="abb_orange"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="-0.28 0 -2.8"/>
+      <origin rpy="0 0 0" xyz="-0.058333 0 -0.583333"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_3.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_3.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
     </collision>
     <inertial>
-      <origin xyz="0.068828 0.029845 -0.019323" rpy="0 0 0"/>
+      <origin xyz="0.014339 0.006218 -0.004026" rpy="0 0 0"/>
       <mass value="16.752833"/>
-      <inertia ixx="1.05343218" ixy="0.09515510" ixz="0.06103470" iyy="2.97284542" iyz="0.01198204" izz="2.70349715"/>
+      <inertia ixx="0.045722" ixy="0.00413" ixz="0.002649" iyy="0.12903" iyz="0.00052" izz="0.117339"/>
     </inertial>
   </link>
   <link name="link_4">
     <visual>
-      <origin rpy="0 0 0" xyz="-0.28 0 -2.8"/>
+      <origin rpy="0 0 0" xyz="-0.058333 0 -0.583333"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_4.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_4.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
       <material name="abb_orange"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="-0.28 0 -2.8"/>
+      <origin rpy="0 0 0" xyz="-0.058333 0 -0.583333"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_4.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_4.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
     </collision>
     <inertial>
-      <origin xyz="1.222223 -0.004804 -0.002515" rpy="0 0 0"/>
+      <origin xyz="0.25463 -0.001001 -0.000524" rpy="0 0 0"/>
       <mass value="3.755635"/>
-      <inertia ixx="0.11360672" ixy="0.00675698" ixz="-0.00194912" iyy="0.23892947" iyz="0.00010494" izz="0.26773996"/>
+      <inertia ixx="0.004931" ixy="0.000293" ixz="-0.000085" iyy="0.01037" iyz="0.000005" izz="0.011621"/>
     </inertial>
   </link>
   <link name="link_5">
     <visual>
-      <origin rpy="0 0 0" xyz="-1.77 0 -2.8"/>
+      <origin rpy="0 0 0" xyz="-0.36875 0 -0.583333"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_5.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_5.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
       <material name="abb_orange"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="-1.77 0 -2.8"/>
+      <origin rpy="0 0 0" xyz="-0.36875 0 -0.583333"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_5.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_5.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
     </collision>
     <inertial>
-      <origin xyz="-0.003882 0.002434 0.002825" rpy="0 0 0"/>
+      <origin xyz="-0.000809 0.000507 0.000589" rpy="0 0 0"/>
       <mass value="0.307952"/>
-      <inertia ixx="0.00232921" ixy="-0.00000416" ixz="0.00000677" iyy="0.00366030" iyz="-0.00000035" izz="0.00225666"/>
+      <inertia ixx="0.000101" ixy="0" ixz="0" iyy="0.000159" iyz="0" izz="0.000098"/>
     </inertial>
   </link>
   <link name="link_6">
     <visual>
-      <origin rpy="0 0 0" xyz="-1.77 0 -2.8"/>
+      <origin rpy="0 0 0" xyz="-0.36875 0 -0.583333"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_6.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/visual/link_6.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
       <material name="abb_orange"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="-1.77 0 -2.8"/>
+      <origin rpy="0 0 0" xyz="-0.36875 0 -0.583333"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_6.stl"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_6.stl" scale="0.208333 0.208333 0.208333"/>
       </geometry>
     </collision>
     <inertial>
-      <origin xyz="0.207163 0.000016 0.002298" rpy="0 0 0"/>
+      <origin xyz="0.043159 0.000003 0.000479" rpy="0 0 0"/>
       <mass value="0.054413"/>
-      <inertia ixx="0.00019395" ixy="-0.00000002" ixz="0.00000141" iyy="0.00019935" iyz="0.00000001" izz="0.00020305"/>
+      <inertia ixx="0.000008" ixy="0" ixz="0" iyy="0.000009" iyz="0" izz="0.000009"/>
     </inertial>
   </link>
   <link name="tool0"/>
@@ -164,14 +164,14 @@
     <limit effort="200" lower="-3.1416" upper="3.1416" velocity="2.618"/>
   </joint>
   <joint name="joint_2" type="revolute">
-    <origin rpy="0 0 0" xyz="0.28 0 1.38"/>
+    <origin rpy="0 0 0" xyz="0.058333 0 0.2875"/>
     <parent link="link_1"/>
     <child link="link_2"/>
     <axis xyz="0 1 0"/>
     <limit effort="200" lower="-1.7453" upper="1.9199" velocity="2.618"/>
   </joint>
   <joint name="joint_3" type="revolute">
-    <origin rpy="0 0 0" xyz="0 0 1.42"/>
+    <origin rpy="0 0 0" xyz="0 0 0.295833"/>
     <parent link="link_2"/>
     <child link="link_3"/>
     <axis xyz="0 1 0"/>
@@ -185,14 +185,14 @@
     <limit effort="50" lower="-3.49" upper="3.49" velocity="6.2832"/>
   </joint>
   <joint name="joint_5" type="revolute">
-    <origin rpy="0 0 0" xyz="1.49 0 0"/>
+    <origin rpy="0 0 0" xyz="0.310417 0 0"/>
     <parent link="link_4"/>
     <child link="link_5"/>
     <axis xyz="0 1 0"/>
     <limit effort="50" lower="-2.0944" upper="2.0944" velocity="6.2832"/>
   </joint>
   <joint name="joint_6" type="revolute">
-    <origin rpy="0 0 0" xyz="0 0 0.02"/>
+    <origin rpy="0 0 0" xyz="0 0 0.004167"/>
     <parent link="link_5"/>
     <child link="link_6"/>
     <axis xyz="1 0 0"/>
