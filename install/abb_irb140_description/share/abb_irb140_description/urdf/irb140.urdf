@@ -7,12 +7,6 @@
   <material name="yellow">
     <color rgba="0 1 1 1"/>
   </material>
-  <link name="world"/>
-  <joint name="world-base_link" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="world"/>
-    <child link="base_link"/>
-  </joint>
   <link name="base_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -26,14 +20,6 @@
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/base_link.stl"/>
       </geometry>
     </collision>
-    <!-- mass/inertia computed from the visual mesh geometry (tetrahedron
-         decomposition, uniform density scaled so the 7 links sum to the
-         published IRB140 mass of ~98 kg); see scratchpad/compute_inertials.py -->
-    <inertial>
-      <origin xyz="-0.322989 0.001583 0.235924" rpy="0 0 0"/>
-      <mass value="26.383023"/>
-      <inertia ixx="3.44385706" ixy="-0.00033128" ixz="0.24198261" iyy="5.51262191" iyz="0.02778120" izz="8.12294273"/>
-    </inertial>
   </link>
   <link name="link_1">
     <visual>
@@ -49,11 +35,6 @@
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_1.stl"/>
       </geometry>
     </collision>
-    <inertial>
-      <origin xyz="0.110652 0.172501 1.037020" rpy="0 0 0"/>
-      <mass value="34.629380"/>
-      <inertia ixx="7.90128229" ixy="-0.02301044" ixz="-0.81430517" iyy="7.16377559" iyz="-1.06976545" izz="7.09446846"/>
-    </inertial>
   </link>
   <link name="link_2">
     <visual>
@@ -69,11 +50,6 @@
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_2.stl"/>
       </geometry>
     </collision>
-    <inertial>
-      <origin xyz="-0.042708 -0.363912 0.786488" rpy="0 0 0"/>
-      <mass value="16.116764"/>
-      <inertia ixx="5.13228056" ixy="0.01700802" ixz="-0.06028269" iyy="4.33353603" iyz="0.59243849" izz="1.48090683"/>
-    </inertial>
   </link>
   <link name="link_3">
     <visual>
@@ -89,11 +65,6 @@
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_3.stl"/>
       </geometry>
     </collision>
-    <inertial>
-      <origin xyz="0.068828 0.029845 -0.019323" rpy="0 0 0"/>
-      <mass value="16.752833"/>
-      <inertia ixx="1.05343218" ixy="0.09515510" ixz="0.06103470" iyy="2.97284542" iyz="0.01198204" izz="2.70349715"/>
-    </inertial>
   </link>
   <link name="link_4">
     <visual>
@@ -109,11 +80,6 @@
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_4.stl"/>
       </geometry>
     </collision>
-    <inertial>
-      <origin xyz="1.222223 -0.004804 -0.002515" rpy="0 0 0"/>
-      <mass value="3.755635"/>
-      <inertia ixx="0.11360672" ixy="0.00675698" ixz="-0.00194912" iyy="0.23892947" iyz="0.00010494" izz="0.26773996"/>
-    </inertial>
   </link>
   <link name="link_5">
     <visual>
@@ -129,11 +95,6 @@
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_5.stl"/>
       </geometry>
     </collision>
-    <inertial>
-      <origin xyz="-0.003882 0.002434 0.002825" rpy="0 0 0"/>
-      <mass value="0.307952"/>
-      <inertia ixx="0.00232921" ixy="-0.00000416" ixz="0.00000677" iyy="0.00366030" iyz="-0.00000035" izz="0.00225666"/>
-    </inertial>
   </link>
   <link name="link_6">
     <visual>
@@ -149,11 +110,6 @@
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140/collision/link_6.stl"/>
       </geometry>
     </collision>
-    <inertial>
-      <origin xyz="0.207163 0.000016 0.002298" rpy="0 0 0"/>
-      <mass value="0.054413"/>
-      <inertia ixx="0.00019395" ixy="-0.00000002" ixz="0.00000141" iyy="0.00019935" iyz="0.00000001" izz="0.00020305"/>
-    </inertial>
   </link>
   <link name="tool0"/>
   <joint name="joint_1" type="revolute">
@@ -161,42 +117,42 @@
     <parent link="base_link"/>
     <child link="link_1"/>
     <axis xyz="0 0 1"/>
-    <limit effort="200" lower="-3.1416" upper="3.1416" velocity="2.618"/>
+    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="2.618"/>
   </joint>
   <joint name="joint_2" type="revolute">
     <origin rpy="0 0 0" xyz="0.28 0 1.38"/>
     <parent link="link_1"/>
     <child link="link_2"/>
     <axis xyz="0 1 0"/>
-    <limit effort="200" lower="-1.7453" upper="1.9199" velocity="2.618"/>
+    <limit effort="0" lower="-1.7453" upper="1.9199" velocity="2.618"/>
   </joint>
   <joint name="joint_3" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 1.42"/>
     <parent link="link_2"/>
     <child link="link_3"/>
     <axis xyz="0 1 0"/>
-    <limit effort="150" lower="-1.0472" upper="1.1345" velocity="2.618"/>
+    <limit effort="0" lower="-1.0472" upper="1.1345" velocity="2.618"/>
   </joint>
   <joint name="joint_4" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="link_3"/>
     <child link="link_4"/>
     <axis xyz="1 0 0"/>
-    <limit effort="50" lower="-3.49" upper="3.49" velocity="6.2832"/>
+    <limit effort="0" lower="-3.49" upper="3.49" velocity="6.2832"/>
   </joint>
   <joint name="joint_5" type="revolute">
     <origin rpy="0 0 0" xyz="1.49 0 0"/>
     <parent link="link_4"/>
     <child link="link_5"/>
     <axis xyz="0 1 0"/>
-    <limit effort="50" lower="-2.0944" upper="2.0944" velocity="6.2832"/>
+    <limit effort="0" lower="-2.0944" upper="2.0944" velocity="6.2832"/>
   </joint>
   <joint name="joint_6" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 0.02"/>
     <parent link="link_5"/>
     <child link="link_6"/>
     <axis xyz="1 0 0"/>
-    <limit effort="20" lower="-6.9813" upper="6.9813" velocity="7.854"/>
+    <limit effort="0" lower="-6.9813" upper="6.9813" velocity="7.854"/>
   </joint>
   <joint name="joint_6-tool0" type="fixed">
     <parent link="link_6"/>
@@ -209,67 +165,4 @@
     <parent link="base_link"/>
     <child link="base"/>
   </joint>
-
-  <ros2_control name="GazeboSimSystem" type="system">
-    <hardware>
-      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-    </hardware>
-    <joint name="joint_1">
-      <command_interface name="position">
-        <param name="min">-3.1416</param>
-        <param name="max">3.1416</param>
-      </command_interface>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="joint_2">
-      <command_interface name="position">
-        <param name="min">-1.7453</param>
-        <param name="max">1.9199</param>
-      </command_interface>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="joint_3">
-      <command_interface name="position">
-        <param name="min">-1.0472</param>
-        <param name="max">1.1345</param>
-      </command_interface>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="joint_4">
-      <command_interface name="position">
-        <param name="min">-3.49</param>
-        <param name="max">3.49</param>
-      </command_interface>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="joint_5">
-      <command_interface name="position">
-        <param name="min">-2.0944</param>
-        <param name="max">2.0944</param>
-      </command_interface>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="joint_6">
-      <command_interface name="position">
-        <param name="min">-6.9813</param>
-        <param name="max">6.9813</param>
-      </command_interface>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-  </ros2_control>
-
-  <gazebo>
-    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <!-- resolved to the real installed path by launch/gazebo.launch.py before
-           robot_description is published; gz_ros2_control does not evaluate
-           $(find pkg) itself when the URDF is passed in as plain text -->
-      <parameters>CONTROLLERS_YAML_PATH</parameters>
-    </plugin>
-  </gazebo>
 </robot>
