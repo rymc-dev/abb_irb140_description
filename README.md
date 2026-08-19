@@ -1,2 +1,3 @@
 # abb_irb140_description
-A ros2 description package for the abb_irb140 robot. 
+
+A ROS2 Humble description package for the ABB_IRB140 robotic platform. 
