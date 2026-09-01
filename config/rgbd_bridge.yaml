@@ -1,0 +1,43 @@
+# ros_gz_bridge config for the irb140 wrist RGBD camera.
+#
+# The gz-sim `rgbd_camera` sensor (defined on the depth_camera link in
+# urdf/irb140.urdf, <topic>rgbd_camera</topic>) publishes:
+#   /rgbd_camera/image         gz.msgs.Image             color (rgb8)
+#   /rgbd_camera/depth_image   gz.msgs.Image             depth (32FC1, metres)
+#   /rgbd_camera/points        gz.msgs.PointCloudPacked  XYZRGB cloud
+#   /rgbd_camera/camera_info   gz.msgs.CameraInfo        shared intrinsics
+#
+# These are remapped to RealSense-style ROS 2 topic names so nodes written
+# against realsense2_camera work unchanged. Colour and depth share one gz
+# camera_info (single aligned sensor), so it is bridged onto both the
+# /camera/color and /camera/depth camera_info topics.
+
+- ros_topic_name: "/camera/color/image_raw"
+  gz_topic_name: "/rgbd_camera/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/camera/color/camera_info"
+  gz_topic_name: "/rgbd_camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/camera/depth/image_rect_raw"
+  gz_topic_name: "/rgbd_camera/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/camera/depth/camera_info"
+  gz_topic_name: "/rgbd_camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/camera/depth/color/points"
+  gz_topic_name: "/rgbd_camera/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS

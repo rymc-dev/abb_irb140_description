@@ -24,6 +24,41 @@ Visualization Manager:
     - Class: rviz_default_plugins/Grid
       Enabled: true
       Name: Grid
+    - Class: rviz_default_plugins/Image
+      Name: Color Image
+      Enabled: true
+      Topic:
+        Value: /camera/color/image_raw
+        Depth: 5
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Durability Policy: Volatile
+      Max Value: 1
+      Min Value: 0
+      Normalize Range: true
+    - Class: rviz_default_plugins/Image
+      Name: Depth Image
+      Enabled: false
+      Topic:
+        Value: /camera/depth/image_rect_raw
+        Depth: 5
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Durability Policy: Volatile
+      Normalize Range: true
+    - Class: rviz_default_plugins/PointCloud2
+      Name: Depth Points
+      Enabled: true
+      Topic:
+        Value: /camera/depth/color/points
+        Depth: 5
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Durability Policy: Volatile
+      Style: Points
+      Size (m): 0.01
+      Color Transformer: RGB8
+      Decay Time: 0
   Global Options:
     Background Color: 48; 48; 48
     Fixed Frame: base_link

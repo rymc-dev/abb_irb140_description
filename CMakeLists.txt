@@ -7,14 +7,18 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
 install(
-  DIRECTORY urdf meshes launch config models worlds
+  DIRECTORY urdf meshes launch config models worlds src
   DESTINATION share/${PROJECT_NAME}
 )
+
+add_executable(pneumonic_gripper_controller src/pneumonic_gripper_controller.cpp)
+ament_target_dependencies(pneumonic_gripper_controller rclcpp)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

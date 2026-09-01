@@ -111,6 +111,20 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
     )
 
+    # Bridges the rgbd_camera sensor (defined on the depth_camera link in
+    # irb140.urdf) from gz-sim into ROS 2 under RealSense-style topic names.
+    # The gz<->ROS topic remapping and GZ_TO_ROS direction are declared in
+    # config/rgbd_bridge.yaml (passed as the parameter_bridge config_file).
+    bridge_config_path = os.path.join(pkg_share, 'config', 'rgbd_bridge.yaml')
+    camera_bridge_node = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='rgbd_camera_bridge',
+        output='screen',
+        parameters=[{'use_sim_time': True}],
+        arguments=['--ros-args', '-p', f'config_file:={bridge_config_path}'],
+    )
+
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
@@ -151,6 +165,7 @@ def generate_launch_description():
         gz_sim,
         robot_state_publisher_node,
         clock_bridge_node,
+        camera_bridge_node,
         spawn_robot_node,
         rviz_node,
         delay_joint_state_broadcaster,
