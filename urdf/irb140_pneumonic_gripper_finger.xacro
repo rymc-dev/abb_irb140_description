@@ -11,7 +11,7 @@
     </material>
 
     <!-- Macro for the finger assembly -->
-    <xacro:macro name="pneumatic_gripper_finger" params="name parent">
+    <xacro:macro name="pneumatic_gripper_finger" params="name parent *origin">
         
         <link name="${name}_link_1">
             <visual>
@@ -122,7 +122,7 @@
         <joint name="${name}_base_to_link_1" type="fixed">
             <parent link="${parent}"/>
             <child link="${name}_link_1"/>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <xacro:insert_block name="origin"/>
         </joint>
 
         <!-- Joints between links -->
