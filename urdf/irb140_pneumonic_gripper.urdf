@@ -11,7 +11,7 @@
             </material>`
         </visual>
         <collision>
-            <origin xyz="0.0165 0 0" rpy="0 0 0"/>
+        <origin xyz="0.0165 0 -0.005" rpy="0 0 0"/>
             <geometry>
                 <box size="0.1 0.125 0.062"/>
             </geometry>
@@ -19,7 +19,7 @@
                 <color rgba="1 0 0 1"/>
             </material>
         </collision>
-        
+
         <!--default inertia and mass estimates till 3d printed.-->
         <inertia ixx="" ixy="0" ixz="0" iyy="" iyz="0" izz=""/>
         <mass value="1"/>
