@@ -3,13 +3,15 @@
 
 <xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumonic_gripper_finger.xacro"/>
 
-<xacro:macro name="pneumatic_gripper" params="name parent">
+<xacro:macro name="pneumatic_gripper" params="name parent xyz:='0 0 0' rpy:='0 0 0'">
 
-    <!-- Attach the gripper body to the robot flange -->
+    <!-- Attach the gripper body to the robot flange.
+         xyz/rpy are expressed in the parent (tool0) frame; set xyz to
+         shift the gripper along the flange axes. -->
     <joint name="${name}_to_${parent}" type="fixed">
         <parent link="${parent}"/>
         <child link="${name}_base_link"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="${xyz}" rpy="${rpy}"/>
     </joint>
 
     <link name="${name}_base_link">
@@ -46,6 +48,8 @@
     <xacro:pneumatic_gripper_finger name="${name}_right" parent="${name}_base_link">
         <origin xyz="-0.008 -0.046 0.0071" rpy="0.0 0.0 -1.57"/>
     </xacro:pneumatic_gripper_finger>
+
+    <xacro:arg name="include_camera" default="true"/>
 
 </xacro:macro>
 

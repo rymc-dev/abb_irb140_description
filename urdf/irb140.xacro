@@ -213,5 +213,5 @@
     <child link="base"/>
   </joint>
 
-  <xacro:pneumatic_gripper name="pneumatic_gripper_1" parent="tool0"/>
+  <xacro:pneumatic_gripper name="pneumatic_gripper" parent="tool0" xyz="0.00 0.0 0.08" rpy="0 0 3.142"/>
 </robot>

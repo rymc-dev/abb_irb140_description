@@ -215,13 +215,15 @@
     <parent link="base_link"/>
     <child link="base"/>
   </joint>
-  <!-- Attach the gripper body to the robot flange -->
-  <joint name="pneumatic_gripper_1_to_tool0" type="fixed">
+  <!-- Attach the gripper body to the robot flange.
+         xyz/rpy are expressed in the parent (tool0) frame; set xyz to
+         shift the gripper along the flange axes. -->
+  <joint name="pneumatic_gripper_to_tool0" type="fixed">
     <parent link="tool0"/>
-    <child link="pneumatic_gripper_1_base_link"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <child link="pneumatic_gripper_base_link"/>
+    <origin rpy="0 0 0" xyz="0.05 0 0"/>
   </joint>
-  <link name="pneumatic_gripper_1_base_link">
+  <link name="pneumatic_gripper_base_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 -0.03105"/>
       <geometry>
@@ -242,7 +244,7 @@
       <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
     </inertial>
   </link>
-  <link name="pneumatic_gripper_1_left_link_1">
+  <link name="pneumatic_gripper_left_link_1">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
@@ -256,7 +258,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_left_link_2">
+  <link name="pneumatic_gripper_left_link_2">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
@@ -270,7 +272,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_left_link_3">
+  <link name="pneumatic_gripper_left_link_3">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
@@ -284,7 +286,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_left_link_4">
+  <link name="pneumatic_gripper_left_link_4">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
@@ -298,7 +300,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_left_link_5">
+  <link name="pneumatic_gripper_left_link_5">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
@@ -312,7 +314,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_left_link_6">
+  <link name="pneumatic_gripper_left_link_6">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
@@ -326,7 +328,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_left_link_7">
+  <link name="pneumatic_gripper_left_link_7">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
@@ -341,55 +343,55 @@
     </collision>
   </link>
   <!-- Base to link_1 joint -->
-  <joint name="pneumatic_gripper_1_left_base_to_link_1" type="fixed">
-    <parent link="pneumatic_gripper_1_base_link"/>
-    <child link="pneumatic_gripper_1_left_link_1"/>
+  <joint name="pneumatic_gripper_left_base_to_link_1" type="fixed">
+    <parent link="pneumatic_gripper_base_link"/>
+    <child link="pneumatic_gripper_left_link_1"/>
     <origin rpy="0.0 0.0 1.57" xyz="0.0 0.046 0.0071"/>
   </joint>
   <!-- Joints between links -->
-  <joint name="pneumatic_gripper_1_left_link_1_to_link_2" type="revolute">
-    <parent link="pneumatic_gripper_1_left_link_1"/>
-    <child link="pneumatic_gripper_1_left_link_2"/>
+  <joint name="pneumatic_gripper_left_link_1_to_link_2" type="revolute">
+    <parent link="pneumatic_gripper_left_link_1"/>
+    <child link="pneumatic_gripper_left_link_2"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_left_link_2_to_link_3" type="revolute">
-    <parent link="pneumatic_gripper_1_left_link_2"/>
-    <child link="pneumatic_gripper_1_left_link_3"/>
+  <joint name="pneumatic_gripper_left_link_2_to_link_3" type="revolute">
+    <parent link="pneumatic_gripper_left_link_2"/>
+    <child link="pneumatic_gripper_left_link_3"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_left_link_3_to_link_4" type="revolute">
-    <parent link="pneumatic_gripper_1_left_link_3"/>
-    <child link="pneumatic_gripper_1_left_link_4"/>
+  <joint name="pneumatic_gripper_left_link_3_to_link_4" type="revolute">
+    <parent link="pneumatic_gripper_left_link_3"/>
+    <child link="pneumatic_gripper_left_link_4"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_left_link_4_to_link_5" type="revolute">
-    <parent link="pneumatic_gripper_1_left_link_4"/>
-    <child link="pneumatic_gripper_1_left_link_5"/>
+  <joint name="pneumatic_gripper_left_link_4_to_link_5" type="revolute">
+    <parent link="pneumatic_gripper_left_link_4"/>
+    <child link="pneumatic_gripper_left_link_5"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_left_link_5_to_link_6" type="revolute">
-    <parent link="pneumatic_gripper_1_left_link_5"/>
-    <child link="pneumatic_gripper_1_left_link_6"/>
+  <joint name="pneumatic_gripper_left_link_5_to_link_6" type="revolute">
+    <parent link="pneumatic_gripper_left_link_5"/>
+    <child link="pneumatic_gripper_left_link_6"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_left_link_6_to_link_7" type="revolute">
-    <parent link="pneumatic_gripper_1_left_link_6"/>
-    <child link="pneumatic_gripper_1_left_link_7"/>
+  <joint name="pneumatic_gripper_left_link_6_to_link_7" type="revolute">
+    <parent link="pneumatic_gripper_left_link_6"/>
+    <child link="pneumatic_gripper_left_link_7"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <link name="pneumatic_gripper_1_right_link_1">
+  <link name="pneumatic_gripper_right_link_1">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
@@ -403,7 +405,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_right_link_2">
+  <link name="pneumatic_gripper_right_link_2">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
@@ -417,7 +419,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_right_link_3">
+  <link name="pneumatic_gripper_right_link_3">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
@@ -431,7 +433,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_right_link_4">
+  <link name="pneumatic_gripper_right_link_4">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
@@ -445,7 +447,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_right_link_5">
+  <link name="pneumatic_gripper_right_link_5">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
@@ -459,7 +461,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_right_link_6">
+  <link name="pneumatic_gripper_right_link_6">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
@@ -473,7 +475,7 @@
       </geometry>
     </collision>
   </link>
-  <link name="pneumatic_gripper_1_right_link_7">
+  <link name="pneumatic_gripper_right_link_7">
     <visual>
       <geometry>
         <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
@@ -488,50 +490,50 @@
     </collision>
   </link>
   <!-- Base to link_1 joint -->
-  <joint name="pneumatic_gripper_1_right_base_to_link_1" type="fixed">
-    <parent link="pneumatic_gripper_1_base_link"/>
-    <child link="pneumatic_gripper_1_right_link_1"/>
+  <joint name="pneumatic_gripper_right_base_to_link_1" type="fixed">
+    <parent link="pneumatic_gripper_base_link"/>
+    <child link="pneumatic_gripper_right_link_1"/>
     <origin rpy="0.0 0.0 -1.57" xyz="-0.008 -0.046 0.0071"/>
   </joint>
   <!-- Joints between links -->
-  <joint name="pneumatic_gripper_1_right_link_1_to_link_2" type="revolute">
-    <parent link="pneumatic_gripper_1_right_link_1"/>
-    <child link="pneumatic_gripper_1_right_link_2"/>
+  <joint name="pneumatic_gripper_right_link_1_to_link_2" type="revolute">
+    <parent link="pneumatic_gripper_right_link_1"/>
+    <child link="pneumatic_gripper_right_link_2"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_right_link_2_to_link_3" type="revolute">
-    <parent link="pneumatic_gripper_1_right_link_2"/>
-    <child link="pneumatic_gripper_1_right_link_3"/>
+  <joint name="pneumatic_gripper_right_link_2_to_link_3" type="revolute">
+    <parent link="pneumatic_gripper_right_link_2"/>
+    <child link="pneumatic_gripper_right_link_3"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_right_link_3_to_link_4" type="revolute">
-    <parent link="pneumatic_gripper_1_right_link_3"/>
-    <child link="pneumatic_gripper_1_right_link_4"/>
+  <joint name="pneumatic_gripper_right_link_3_to_link_4" type="revolute">
+    <parent link="pneumatic_gripper_right_link_3"/>
+    <child link="pneumatic_gripper_right_link_4"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_right_link_4_to_link_5" type="revolute">
-    <parent link="pneumatic_gripper_1_right_link_4"/>
-    <child link="pneumatic_gripper_1_right_link_5"/>
+  <joint name="pneumatic_gripper_right_link_4_to_link_5" type="revolute">
+    <parent link="pneumatic_gripper_right_link_4"/>
+    <child link="pneumatic_gripper_right_link_5"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_right_link_5_to_link_6" type="revolute">
-    <parent link="pneumatic_gripper_1_right_link_5"/>
-    <child link="pneumatic_gripper_1_right_link_6"/>
+  <joint name="pneumatic_gripper_right_link_5_to_link_6" type="revolute">
+    <parent link="pneumatic_gripper_right_link_5"/>
+    <child link="pneumatic_gripper_right_link_6"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
   </joint>
-  <joint name="pneumatic_gripper_1_right_link_6_to_link_7" type="revolute">
-    <parent link="pneumatic_gripper_1_right_link_6"/>
-    <child link="pneumatic_gripper_1_right_link_7"/>
+  <joint name="pneumatic_gripper_right_link_6_to_link_7" type="revolute">
+    <parent link="pneumatic_gripper_right_link_6"/>
+    <child link="pneumatic_gripper_right_link_7"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit effort="10" lower="-0.0698" upper="0" velocity="1.0"/>
