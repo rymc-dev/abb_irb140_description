@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pneumatic_gripper">
+
+<xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumonic_gripper_finger.xacro"/>
+
+<link name="base_link">
+    <visual>
+        <origin xyz="0 0 -0.03105" rpy="0 0 0"/>
+        <geometry>
+            <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="plastic">
+            <color rgba="0.11 0.11 0.11 1"/>
+        </material>
+    </visual>
+    
+    <collision>
+        <origin xyz="0.0165 0 -0.005" rpy="0 0 0"/>
+        <geometry>
+            <box size="0.1 0.125 0.062"/>
+        </geometry>
+    </collision>
+    
+    <inertial>
+        <mass value="1.0"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+    </inertial>
+</link>
+
+<!-- Spawn left and right gripper fingers -->
+<xacro:pneumatic_gripper_finger name="left_gripper" parent="base_link"/>
+<xacro:pneumatic_gripper_finger name="right_gripper" parent="base_link"/>
+
+<joint name="left_gripper_to_base_link" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_gripper_link_1"/>
+
+    <origin xyz="0.0 0.046 0.0071" rpy="0.0 0.0 1.57"/>
+</joint>
+
+<joint name="right_gripper_to_base_link" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_gripper_link_1"/>
+    
+    <origin xyz="-0.008 -0.046 0.0071" rpy="0.0 0.0 -1.57"/>
+</joint>
+</robot>
