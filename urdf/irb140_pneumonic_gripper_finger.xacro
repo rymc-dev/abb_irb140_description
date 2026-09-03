@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pneumatic_gripper_finger">
+    <xacro:property name="mesh_scale" value="0.001 0.001 0.001"/>
+    <xacro:property mame="collision_scale" value="0.025 0.03 0.1"/>
+
+    <material name="offwhite">
+        <color rgba="0.8 0.8 0.8 1"/>
+    </material>
+    <!--  Links-->
+    <link name="link_1">
+        <visual>
+            <geometry>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_1.stl" scale="${mesh_scale}"/>
+            </geometry>
+            <material name="offwhite"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0.005 0.009" rpy=""/>
+            <geometry>
+                <box size="0.025 0.03 0.022"/>
+            </geometry>
+        </collision>
+    </link>
+    
+    <link name="link_1">
+        <visual>
+            <geometry>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_1.stl" scale="${mesh_scale}"/>
+            </geometry>
+            <material name="offwhite"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.025" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.025 0.03 0.011"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="link_2">
+        <visual>
+            <geometry>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_2.stl" scale="${mesh_scale}"/>
+            </geometry>
+            <material name="offwhite"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.035" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.025 0.03 0.011"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="link_3">
+        <visual>
+            <geometry>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_3.stl" scale="${mesh_scale}"/>
+            </geometry>
+            <material name="offwhite"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.045" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.025 0.03 0.011"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="link_4">
+        <visual>
+            <geometry>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_4.stl" scale="${mesh_scale}"/>
+            </geometry>
+            <material name="offwhite"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.055" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.025 0.03 0.011"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="link_5">
+        <visual>
+            <geometry>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_5.stl" scale="${mesh_scale}"/>
+            </geometry>
+            <material name="offwhite"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.065" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.025 0.03 0.011"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="link_6">
+        <visual>
+            <geometry>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_6.stl" scale="${mesh_scale}"/>
+            </geometry>
+            <material name="offwhite"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.075" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.025 0.03 0.011"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="link_7">
+        <visual>
+            <geometry>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_7.stl" scale="${mesh_scale}"/>
+            </geometry>
+            <material name="offwhite"/>
+        </visual>        
+        <collision>
+            <origin xyz="0 0 0.085" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.025 0.03 0.011"/>
+            </geometry>
+        </collision>
+    </link>
+    
+    <!-- Joints -->
+    <joint name="link_1_to_link_2" type="revolute">
+        <parent link="link_1"/>
+        <child link="link_2"/>
+
+        <!-- joint origin -->
+        <origin xyz="0 0 0/" rpy="0 0 0"/>
+        
+        <axis xyz="0 1 0"/>
+
+        <limit lower="-0.0524" upper="0" effort="10" velocity="1.0"/>
+    </joint>
+
+    <joint name="link_2_to_link_3" type="revolute">
+        <parent link="link_2"/>
+        <child link="link_3"/>
+
+        <!-- joint origin -->
+        <origin xyz="0 0 0/" rpy="0 0 0"/>
+        
+        <axis xyz="0 1 0"/>
+
+        <limit lower="-0.0524" upper="0" effort="10" velocity="1.0"/>
+    </joint>
+
+    <joint name="link_3_to_link_4" type="revolute">
+        <parent link="link_3"/>
+        <child link="link_4"/>
+
+        <!-- joint origin -->
+        <origin xyz="0 0 0/" rpy="0 0 0"/>
+        
+        <axis xyz="0 1 0"/>
+
+        <limit lower="-0.0524" upper="0" effort="10" velocity="1.0"/>
+    </joint>
+
+    <joint name="link_4_to_link_5" type="revolute">
+        <parent link="link_4"/>
+        <child link="link_5"/>
+
+        <!-- joint origin -->
+        <origin xyz="0 0 0/" rpy="0 0 0"/>
+        
+        <axis xyz="0 1 0"/>
+
+        <limit lower="-0.0524" upper="0" effort="10" velocity="1.0"/>
+    </joint>
+
+    <joint name="link_5_to_link_6" type="revolute">
+        <parent link="link_5"/>
+        <child link="link_6"/>
+
+        <!-- joint origin -->
+        <origin xyz="0 0 0/" rpy="0 0 0"/>
+        
+        <axis xyz="0 1 0"/>
+
+        <limit lower="-0.0524" upper="0" effort="10" velocity="1.0"/>
+    </joint>
+
+    <joint name="link_6_to_link_7" type="revolute">
+        <parent link="link_6"/>
+        <child link="link_7"/>
+
+        <!-- joint origin -->
+        <origin xyz="0 0 0/" rpy="0 0 0"/>
+        
+        <axis xyz="0 1 0"/>
+
+        <limit lower="-0.0524" upper="0" effort="10" velocity="1.0"/>
+    </joint>
+</robot>
