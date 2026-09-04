@@ -141,6 +141,14 @@ def generate_launch_description():
         arguments=['arm_controller'],
     )
 
+    gripper_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        name='gripper_controller_spawner',
+        output='screen',
+        arguments=['gripper_controller'],
+    )
+
     # gz_ros2_control's plugin (loaded via the URDF's <gazebo> tag) brings up
     # the controller_manager inside gz-sim once the robot entity exists, so
     # controller spawning is chained off the spawn process finishing rather
@@ -159,6 +167,13 @@ def generate_launch_description():
         )
     )
 
+    delay_gripper_controller = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=arm_controller_spawner,
+            on_exit=[gripper_controller_spawner],
+        )
+    )
+
     return LaunchDescription([
         declare_use_rviz,
         set_gz_resource_path,
@@ -170,4 +185,5 @@ def generate_launch_description():
         rviz_node,
         delay_joint_state_broadcaster,
         delay_arm_controller,
+        delay_gripper_controller,
     ])

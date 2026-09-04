@@ -2,12 +2,20 @@ controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
     use_sim_time: true
+    # gz_ros2_control drives every position command interface with a velocity
+    # command (error * gain) instead of a per-tick JointPositionReset teleport.
+    # The teleport can only move one joint and loses against the gripper's 11
+    # <mimic> constraints, which left the fingers stuck at the joint limit.
+    position_proportional_gain: 3.0
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
     arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
+
+    gripper_controller:
+      type: position_controllers/GripperActionController
 
 arm_controller:
   ros__parameters:
@@ -23,3 +31,25 @@ arm_controller:
     state_interfaces:
       - position
       - velocity
+
+gripper_controller:
+  ros__parameters:
+    # Drives the left finger's first joint; the other 11 finger joints mimic
+    # it (see urdf/irb140.xacro). Exposes action /gripper_controller/gripper_cmd
+    # (control_msgs/action/GripperCommand): position 0.0 = open, -0.0698 = closed.
+    # The finger joints' hard limit is -0.09 (urdf/irb140.xacro), so the -0.0698
+    # "closed" command settles ~0.02 rad clear of the mechanical stop -- opening
+    # from "closed" is then a free move, not a fight to unpeg from the limit.
+    joint: pneumatic_gripper_left_link_1_to_link_2
+    max_effort: 10.0
+    # true: a goal the fingers can't fully reach (soft contact on a grasped
+    # object, or a slow escape from near the limit) still reports SUCCEEDED once
+    # motion settles, instead of ABORTing. With the -0.02 rad limit margin above
+    # this no longer masks a real jam -- a full open from "closed" completes
+    # normally; stalling now only means "pressed on something and stopped".
+    allow_stalling: true
+    goal_tolerance: 0.01
+    stall_velocity_threshold: 0.001
+    stall_timeout: 2.0            # allow 2 s of near-zero velocity before calling
+                                  # it stalled (was 1 s -- too tight for a big
+                                  # single-shot open under the weak position gain)
