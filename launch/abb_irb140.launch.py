@@ -1,5 +1,6 @@
 import os
 
+import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
@@ -10,7 +11,10 @@ from launch_ros.actions import Node
 def generate_launch_description():
     pkg_share = get_package_share_directory('abb_irb140_description')
 
-    urdf_path = os.path.join(pkg_share, 'urdf', 'irb140.urdf')
+    # Process the xacro at launch time so edits to irb140.xacro (and its
+    # includes) take effect on the next launch with no regeneration step --
+    # combined with a --symlink-install build, no colcon build either.
+    xacro_path = os.path.join(pkg_share, 'urdf', 'irb140.xacro')
     default_rviz_config_path = os.path.join(pkg_share, 'config', 'urdf.rviz')
 
     declare_rviz_config = DeclareLaunchArgument(
@@ -21,8 +25,7 @@ def generate_launch_description():
 
     rviz_config_path = LaunchConfiguration('rviz_config')
 
-    with open(urdf_path, 'r') as urdf_file:
-        robot_description = urdf_file.read()
+    robot_description = xacro.process_file(xacro_path).toxml()
 
     robot_state_publisher_node = Node(
         package='robot_state_publisher',

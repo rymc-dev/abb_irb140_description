@@ -40,8 +40,18 @@
          follow a single ros2_control command interface. -->
     <xacro:macro name="pneumatic_gripper_finger" params="name parent mimic_master:='' *origin">
 
-        <!-- Joint that every non-driver segment of this finger mimics. -->
-        <xacro:property name="_master" value="${mimic_master if mimic_master else name + '_link_1_to_link_2'}"/>
+        <!-- Joint that every non-driver segment of this finger mimics.
+             mimic_master is empty on the driver finger, so it defaults to
+             mimicking its own ${name}_link_1_to_link_2 joint; the other
+             finger passes in the driver's joint name to override that.
+             Written with xacro:unless (rather than a python
+             "X if Y else Z" property expression) so this still parses under
+             JS-based xacro tools (e.g. IDE xacro/URDF previews), not just
+             the Python xacro used at colcon-build time. -->
+        <xacro:property name="_master" value="${name}_link_1_to_link_2"/>
+        <xacro:unless value="${mimic_master == ''}">
+            <xacro:property name="_master" value="${mimic_master}"/>
+        </xacro:unless>
 
         <link name="${name}_link_1">
             <visual>

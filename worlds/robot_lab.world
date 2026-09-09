@@ -62,6 +62,39 @@
       <pose>0 0 0 0 0 0</pose>
     </include>
 
+    <model name="my_sphere">
+      <pose>0.705 0 1.15 0 0 0</pose>
+      <link name="sphere_link">
+        <inertial>
+          <mass>0.5</mass>
+          <inertia>
+            <ixx>0.4</ixx>
+            <iyy>0.4</iyy>
+            <izz>0.4</izz>
+          </inertia>
+        </inertial>
+        <collision name="sphere_collision">
+          <geometry>
+            <sphere>
+              <radius>0.03</radius>
+            </sphere>
+          </geometry>
+        </collision>
+        <visual name="sphere_visual">
+          <geometry>
+            <sphere>
+              <radius>0.03</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Red</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
     <!-- Robot lab table, placed in front of the podium (+X, the direction
          the irb140's arm reaches in) with a 20cm gap between the nearest
          faces of the two footprints:
@@ -72,7 +105,7 @@
     <include>
       <uri>model://abb_irb140_description/models/robot_lab_table</uri>
       <name>robot_lab_table</name>
-      <pose>1.179 0 0 0 0 0</pose>
+      <pose>0.979 0 0 0 0 0</pose>
     </include>
   </world>
 </sdf>

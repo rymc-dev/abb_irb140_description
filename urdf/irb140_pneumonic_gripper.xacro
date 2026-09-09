@@ -89,7 +89,7 @@
         <joint name="${name}_to_depth_camera" type="fixed">
             <parent link="${name}_base_link"/>
             <child link="depth_camera"/>
-            <origin xyz="-0.025 0.0 0.3" rpy="3.14159265359 0 0"/>
+            <origin xyz="-0.025 0.0 0.05" rpy="3.14159265359 -1.57079632679 0"/>
         </joint>
 
         <!-- Keep depth_camera as its own link/frame in the converted SDF
@@ -107,7 +107,7 @@
         <joint name="depth_camera_to_optical" type="fixed">
             <parent link="depth_camera"/>
             <child link="depth_camera_optical"/>
-            <origin xyz="0 0 0" rpy="0 -1.57 0"/>
+            <origin xyz="0 0 0" rpy="0.0 0.0 0"/>
         </joint>
 
         <!-- reference="depth_camera" binds the gz-sim sensor to that link.

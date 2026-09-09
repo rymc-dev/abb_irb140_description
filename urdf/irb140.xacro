@@ -4,6 +4,11 @@
 
   <xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumonic_gripper.xacro"/>
 
+  <!-- Path to the ros2_control controller config, consumed by the
+       gz_ros2_control plugin's <parameters> tag below. launch/gazebo.launch.py
+       overrides this with the resolved installed config/controllers.yaml. -->
+  <xacro:arg name="controllers_yaml" default="$(find abb_irb140_description)/config/controllers.yaml"/>
+
   <material name="abb_orange">
     <color rgba="1 0.43 0 1"/>
   </material>
@@ -343,14 +348,13 @@
   </ros2_control>
 
   <!-- Brings up a controller_manager inside gz-sim once the entity is spawned.
-       CONTROLLERS_YAML_PATH is a literal token that launch/gazebo.launch.py
-       rewrites to the installed config/controllers.yaml path before the URDF
-       is published (gz_ros2_control does not evaluate $(find pkg) itself when
-       the description is passed through as plain text). -->
+       The controller config path comes from the controllers_yaml xacro arg
+       (see top of file); launch/gazebo.launch.py passes the resolved installed
+       path since gz_ros2_control does not evaluate $(find pkg) itself. -->
   <gazebo>
     <plugin filename="gz_ros2_control-system"
             name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>CONTROLLERS_YAML_PATH</parameters>
+      <parameters>$(arg controllers_yaml)</parameters>
     </plugin>
   </gazebo>
 </robot>
