@@ -4,15 +4,55 @@
     <!-- Properties -->
     <xacro:property name="mesh_scale" value="0.001 0.001 0.001"/>
     <xacro:property name="collision_scale" value="0.025 0.03 0.1"/>
-    <xacro:property name="joint_lower_limit" value="-0.0698"/>
+    <!-- Mechanical hard stop for each finger segment. The GripperActionController
+         is commanded to -0.0698 for "closed" (command_interface min in
+         irb140.xacro), so this limit sits 0.02 rad beyond that: a closed gripper
+         rests short of the stop instead of jamming against it, which is what let
+         a single-shot open stall out from the fully-closed pose. -->
+    <xacro:property name="joint_lower_limit" value="-0.09"/>
+
+    <!-- Cast silicone rubber (Dragon Skin / Ecoflex class), ~1100 kg/m^3.
+         Raise this if the finger chain jitters in Gazebo; it scales every
+         segment mass and inertia together. -->
+    <xacro:property name="silicone_density" value="1100.0"/>
 
     <material name="offwhite">
         <color rgba="0.8 0.8 0.8 1"/>
     </material>
 
-    <!-- Macro for the finger assembly -->
-    <xacro:macro name="pneumatic_gripper_finger" params="name parent *origin">
-        
+    <!-- Solid-box mass + inertia from full box dimensions (sx,sy,sz) and a
+         material density. Inertia is taken about the box centre, so pass the
+         same *origin used for the matching <collision> box. -->
+    <xacro:macro name="solid_box_inertial" params="sx sy sz density *origin">
+        <inertial>
+            <xacro:insert_block name="origin"/>
+            <mass value="${density * sx * sy * sz}"/>
+            <inertia ixx="${density * sx * sy * sz * (sy*sy + sz*sz) / 12.0}" ixy="0.0" ixz="0.0"
+                     iyy="${density * sx * sy * sz * (sx*sx + sz*sz) / 12.0}" iyz="0.0"
+                     izz="${density * sx * sy * sz * (sx*sx + sy*sy) / 12.0}"/>
+        </inertial>
+    </xacro:macro>
+
+    <!-- Macro for the finger assembly.
+         mimic_master: leave empty on the driver finger, so its own
+         ${name}_link_1_to_link_2 becomes the joint everything else mimics.
+         Set it to that joint's name on the second finger so both fingers
+         follow a single ros2_control command interface. -->
+    <xacro:macro name="pneumatic_gripper_finger" params="name parent mimic_master:='' *origin">
+
+        <!-- Joint that every non-driver segment of this finger mimics.
+             mimic_master is empty on the driver finger, so it defaults to
+             mimicking its own ${name}_link_1_to_link_2 joint; the other
+             finger passes in the driver's joint name to override that.
+             Written with xacro:unless (rather than a python
+             "X if Y else Z" property expression) so this still parses under
+             JS-based xacro tools (e.g. IDE xacro/URDF previews), not just
+             the Python xacro used at colcon-build time. -->
+        <xacro:property name="_master" value="${name}_link_1_to_link_2"/>
+        <xacro:unless value="${mimic_master == ''}">
+            <xacro:property name="_master" value="${mimic_master}"/>
+        </xacro:unless>
+
         <link name="${name}_link_1">
             <visual>
                 <geometry>
@@ -26,6 +66,9 @@
                     <box size="0.025 0.03 0.022"/>
                 </geometry>
             </collision>
+            <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.022" density="${silicone_density}">
+                <origin xyz="0 0.005 0.009" rpy="0 0 0"/>
+            </xacro:solid_box_inertial>
         </link>
 
         <link name="${name}_link_2">
@@ -41,6 +84,9 @@
                     <box size="0.025 0.03 0.011"/>
                 </geometry>
             </collision>
+            <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
+                <origin xyz="0 0 0.025" rpy="0 0 0"/>
+            </xacro:solid_box_inertial>
         </link>
 
         <link name="${name}_link_3">
@@ -56,6 +102,9 @@
                     <box size="0.025 0.03 0.011"/>
                 </geometry>
             </collision>
+            <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
+                <origin xyz="0 0 0.035" rpy="0 0 0"/>
+            </xacro:solid_box_inertial>
         </link>
 
         <link name="${name}_link_4">
@@ -71,6 +120,9 @@
                     <box size="0.025 0.03 0.011"/>
                 </geometry>
             </collision>
+            <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
+                <origin xyz="0 0 0.055" rpy="0 0 0"/>
+            </xacro:solid_box_inertial>
         </link>
 
         <link name="${name}_link_5">
@@ -86,6 +138,9 @@
                     <box size="0.025 0.03 0.011"/>
                 </geometry>
             </collision>
+            <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
+                <origin xyz="0 0 0.065" rpy="0 0 0"/>
+            </xacro:solid_box_inertial>
         </link>
 
         <link name="${name}_link_6">
@@ -101,6 +156,9 @@
                     <box size="0.025 0.03 0.011"/>
                 </geometry>
             </collision>
+            <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
+                <origin xyz="0 0 0.075" rpy="0 0 0"/>
+            </xacro:solid_box_inertial>
         </link>
 
         <link name="${name}_link_7">
@@ -116,6 +174,9 @@
                     <box size="0.025 0.03 0.011"/>
                 </geometry>
             </collision>
+            <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
+                <origin xyz="0 0 0.085" rpy="0 0 0"/>
+            </xacro:solid_box_inertial>
         </link>
 
         <!-- Base to link_1 joint -->
@@ -132,6 +193,10 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
             <limit lower="${joint_lower_limit}" upper="0" effort="10" velocity="1.0"/>
+            <dynamics damping="0.1"/>
+            <xacro:if value="${mimic_master != ''}">
+                <mimic joint="${mimic_master}" multiplier="1.0" offset="0.0"/>
+            </xacro:if>
         </joint>
 
         <joint name="${name}_link_2_to_link_3" type="revolute">
@@ -140,6 +205,8 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
             <limit lower="${joint_lower_limit}" upper="0" effort="10" velocity="1.0"/>
+            <dynamics damping="0.1"/>
+            <mimic joint="${_master}" multiplier="1.0" offset="0.0"/>
         </joint>
 
         <joint name="${name}_link_3_to_link_4" type="revolute">
@@ -148,6 +215,8 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
             <limit lower="${joint_lower_limit}" upper="0" effort="10" velocity="1.0"/>
+            <dynamics damping="0.1"/>
+            <mimic joint="${_master}" multiplier="1.0" offset="0.0"/>
         </joint>
 
         <joint name="${name}_link_4_to_link_5" type="revolute">
@@ -156,6 +225,8 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
             <limit lower="${joint_lower_limit}" upper="0" effort="10" velocity="1.0"/>
+            <dynamics damping="0.1"/>
+            <mimic joint="${_master}" multiplier="1.0" offset="0.0"/>
         </joint>
 
         <joint name="${name}_link_5_to_link_6" type="revolute">
@@ -164,6 +235,8 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
             <limit lower="${joint_lower_limit}" upper="0" effort="10" velocity="1.0"/>
+            <dynamics damping="0.1"/>
+            <mimic joint="${_master}" multiplier="1.0" offset="0.0"/>
         </joint>
 
         <joint name="${name}_link_6_to_link_7" type="revolute">
@@ -172,6 +245,8 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
             <limit lower="${joint_lower_limit}" upper="0" effort="10" velocity="1.0"/>
+            <dynamics damping="0.1"/>
+            <mimic joint="${_master}" multiplier="1.0" offset="0.0"/>
         </joint>
 
     </xacro:macro>

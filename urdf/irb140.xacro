@@ -4,6 +4,11 @@
 
   <xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumonic_gripper.xacro"/>
 
+  <!-- Path to the ros2_control controller config, consumed by the
+       gz_ros2_control plugin's <parameters> tag below. launch/gazebo.launch.py
+       overrides this with the resolved installed config/controllers.yaml. -->
+  <xacro:arg name="controllers_yaml" default="$(find abb_irb140_description)/config/controllers.yaml"/>
+
   <material name="abb_orange">
     <color rgba="1 0.43 0 1"/>
   </material>
@@ -214,4 +219,142 @@
   </joint>
 
   <xacro:pneumatic_gripper name="pneumatic_gripper" parent="tool0" xyz="0.00 0.0 0.08" rpy="0 0 3.142"/>
+
+  <!-- =================================================================== -->
+  <!-- ros2_control + Gazebo Sim                                           -->
+  <!-- =================================================================== -->
+
+  <!-- ros2_control hardware for the 6 arm joints. gz_ros2_control's
+       GazeboSimSystem reads/writes these interfaces straight from the gz-sim
+       physics engine. command/state interfaces match config/controllers.yaml
+       (arm_controller: position command; position + velocity state). -->
+  <ros2_control name="GazeboSimSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="joint_1">
+      <command_interface name="position">
+        <param name="min">-3.1416</param>
+        <param name="max">3.1416</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint_2">
+      <command_interface name="position">
+        <param name="min">-1.7453</param>
+        <param name="max">1.9199</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint_3">
+      <command_interface name="position">
+        <param name="min">-1.0472</param>
+        <param name="max">1.1345</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint_4">
+      <command_interface name="position">
+        <param name="min">-3.49</param>
+        <param name="max">3.49</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint_5">
+      <command_interface name="position">
+        <param name="min">-2.0944</param>
+        <param name="max">2.0944</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint_6">
+      <command_interface name="position">
+        <param name="min">-6.9813</param>
+        <param name="max">6.9813</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <!-- Pneumatic gripper. Only the left finger's first joint is a real
+         driver (position command interface); the other 11 finger joints are
+         declared mimic="true" here and carry <mimic> elements in
+         irb140_pneumonic_gripper_finger.xacro, so a single
+         GripperActionController (config/controllers.yaml: gripper_controller)
+         opens/closes both fingers. Mimic joints may only export state
+         interfaces. -->
+    <joint name="pneumatic_gripper_left_link_1_to_link_2">
+      <!-- Software travel limit for the driver joint: -0.0698 ("closed") is
+           deliberately kept 0.02 rad inside the -0.09 mechanical joint limit
+           (see irb140_pneumonic_gripper_finger.xacro) so a closed gripper is
+           resting, not pegged on the hard stop; opening from closed is then
+           a free move the weak position gain can complete without stalling. -->
+      <command_interface name="position">
+        <param name="min">-0.0698</param>
+        <param name="max">0.0</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_left_link_2_to_link_3" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_left_link_3_to_link_4" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_left_link_4_to_link_5" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_left_link_5_to_link_6" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_left_link_6_to_link_7" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_right_link_1_to_link_2" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_right_link_2_to_link_3" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_right_link_3_to_link_4" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_right_link_4_to_link_5" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_right_link_5_to_link_6" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pneumatic_gripper_right_link_6_to_link_7" mimic="true">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- Brings up a controller_manager inside gz-sim once the entity is spawned.
+       The controller config path comes from the controllers_yaml xacro arg
+       (see top of file); launch/gazebo.launch.py passes the resolved installed
+       path since gz_ros2_control does not evaluate $(find pkg) itself. -->
+  <gazebo>
+    <plugin filename="gz_ros2_control-system"
+            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(arg controllers_yaml)</parameters>
+    </plugin>
+  </gazebo>
 </robot>

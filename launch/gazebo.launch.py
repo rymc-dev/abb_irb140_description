@@ -1,5 +1,6 @@
 import os
 
+import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
@@ -37,16 +38,15 @@ def generate_launch_description():
         'GZ_SIM_RESOURCE_PATH', gz_resource_path_value
     )
 
-    urdf_path = os.path.join(pkg_share, 'urdf', 'irb140.urdf')
+    # Process the xacro at launch time (edits to irb140.xacro take effect on
+    # the next launch, no regeneration step). The controllers_yaml mapping
+    # feeds gz_ros2_control's <parameters> tag the resolved installed path --
+    # xacro evaluates it here, unlike the plain-text URDF path this replaces.
+    xacro_path = os.path.join(pkg_share, 'urdf', 'irb140.xacro')
     controllers_yaml_path = os.path.join(pkg_share, 'config', 'controllers.yaml')
-    with open(urdf_path, 'r') as urdf_file:
-        robot_description = urdf_file.read()
-    # gz_ros2_control's <parameters> tag isn't resolved through xacro's
-    # $(find pkg) here (the URDF is passed through as plain text, not
-    # xacro-processed), so substitute the real installed path ourselves.
-    robot_description = robot_description.replace(
-        'CONTROLLERS_YAML_PATH', controllers_yaml_path
-    )
+    robot_description = xacro.process_file(
+        xacro_path, mappings={'controllers_yaml': controllers_yaml_path}
+    ).toxml()
 
     # robot_lab.world places the robot_lab_podium and robot_lab_table
     # models (the irb140 itself is spawned separately below, on top of
@@ -141,6 +141,14 @@ def generate_launch_description():
         arguments=['arm_controller'],
     )
 
+    gripper_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        name='gripper_controller_spawner',
+        output='screen',
+        arguments=['gripper_controller'],
+    )
+
     # gz_ros2_control's plugin (loaded via the URDF's <gazebo> tag) brings up
     # the controller_manager inside gz-sim once the robot entity exists, so
     # controller spawning is chained off the spawn process finishing rather
@@ -159,6 +167,13 @@ def generate_launch_description():
         )
     )
 
+    delay_gripper_controller = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=arm_controller_spawner,
+            on_exit=[gripper_controller_spawner],
+        )
+    )
+
     return LaunchDescription([
         declare_use_rviz,
         set_gz_resource_path,
@@ -170,4 +185,5 @@ def generate_launch_description():
         rviz_node,
         delay_joint_state_broadcaster,
         delay_arm_controller,
+        delay_gripper_controller,
     ])

@@ -3,6 +3,14 @@
 
 <xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumonic_gripper_finger.xacro"/>
 
+<!-- Set include_camera:=false at xacro time to drop the wrist RGBD camera. -->
+<xacro:arg name="include_camera" default="true"/>
+
+<!-- 3D-printed PLA housing: solid PLA is ~1240 kg/m^3; with typical printed
+     wall/infill this shell is roughly half that, so ~650 kg/m^3 over the
+     bounding box gives a realistic ~0.45 kg body. -->
+<xacro:property name="pla_density" value="650.0"/>
+
 <xacro:macro name="pneumatic_gripper" params="name parent xyz:='0 0 0' rpy:='0 0 0'">
 
     <!-- Attach the gripper body to the robot flange.
@@ -32,24 +40,111 @@
             </geometry>
         </collision>
 
-        <inertial>
-            <mass value="1.0"/>
-            <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
-        </inertial>
+        <xacro:solid_box_inertial sx="0.1" sy="0.125" sz="0.062" density="${pla_density}">
+            <origin xyz="0.0165 0 -0.005" rpy="0 0 0"/>
+        </xacro:solid_box_inertial>
     </link>
 
     <!-- Spawn left and right gripper fingers.
          The offset/rotation for each finger is passed straight into the
-         finger macro's base joint (its <origin> block). -->
+         finger macro's base joint (its <origin> block).
+         The left finger's first joint (${name}_left_link_1_to_link_2) is the
+         single driver: it gets the ros2_control position command interface in
+         irb140.xacro, and the other 11 finger joints mimic it, so one
+         GripperActionController opens/closes both fingers. -->
     <xacro:pneumatic_gripper_finger name="${name}_left" parent="${name}_base_link">
         <origin xyz="0.0 0.046 0.0071" rpy="0.0 0.0 1.57"/>
     </xacro:pneumatic_gripper_finger>
 
-    <xacro:pneumatic_gripper_finger name="${name}_right" parent="${name}_base_link">
+    <xacro:pneumatic_gripper_finger name="${name}_right" parent="${name}_base_link"
+                                    mimic_master="${name}_left_link_1_to_link_2">
         <origin xyz="-0.008 -0.046 0.0071" rpy="0.0 0.0 -1.57"/>
     </xacro:pneumatic_gripper_finger>
 
-    <xacro:arg name="include_camera" default="true"/>
+    <!-- ================================================================= -->
+    <!-- Eye-in-hand RGBD camera                                           -->
+    <!-- ================================================================= -->
+    <!-- Link/sensor/topic names are deliberately un-namespaced
+         (depth_camera / rgbd_camera): config/rgbd_bridge.yaml and
+         launch/gazebo.launch.py refer to them by those fixed names. Only one
+         gripper is ever instantiated, so there is no collision. -->
+    <xacro:if value="$(arg include_camera)">
+
+        <!-- Geometry-less sensor frame: the physical camera is already
+             sculpted into the base_link visual mesh, so this link carries no
+             visual/collision of its own (that would just duplicate the mesh
+             as a second, floating box). It exists purely so the Gazebo
+             rgbd_camera sensor below has a link to attach to, positioned and
+             rotated (local +X is the gz camera view axis) to coincide with
+             the real camera on the mesh, along the gripper's approach
+             direction (+Z of ${name}_base_link). Tune the joint origin below
+             to reframe the grasp view. -->
+        <link name="depth_camera">
+            <inertial>
+                <mass value="0.05"/>
+                <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+            </inertial>
+        </link>
+
+        <joint name="${name}_to_depth_camera" type="fixed">
+            <parent link="${name}_base_link"/>
+            <child link="depth_camera"/>
+            <origin xyz="-0.025 0.0 0.05" rpy="3.14159265359 -1.57079632679 0"/>
+        </joint>
+
+        <!-- Keep depth_camera as its own link/frame in the converted SDF
+             instead of letting urdf2sdf lump it (and the sensor) back into
+             link_6 through the fixed-joint chain. -->
+        <gazebo reference="${name}_to_depth_camera">
+            <preserveFixedJoint>true</preserveFixedJoint>
+            <disableFixedJointLumping>true</disableFixedJointLumping>
+        </gazebo>
+
+        <!-- Standard ROS optical frame (z forward, x right, y down) relative to
+             the camera body link; camera_info / point clouds are published in
+             this frame. -->
+        <link name="depth_camera_optical"/>
+        <joint name="depth_camera_to_optical" type="fixed">
+            <parent link="depth_camera"/>
+            <child link="depth_camera_optical"/>
+            <origin xyz="0 0 0" rpy="0.0 0.0 0"/>
+        </joint>
+
+        <!-- reference="depth_camera" binds the gz-sim sensor to that link.
+             worlds/robot_lab.world already loads gz-sim-sensors-system. gz
+             publishes /rgbd_camera/{image,depth_image,points,camera_info};
+             those are remapped to RealSense-style ROS 2 names by
+             config/rgbd_bridge.yaml in launch/gazebo.launch.py. -->
+        <gazebo reference="depth_camera">
+            <sensor name="rgbd_camera" type="rgbd_camera">
+                <always_on>1</always_on>
+                <update_rate>30</update_rate>
+                <visualize>true</visualize>
+                <topic>rgbd_camera</topic>
+                <gz_frame_id>depth_camera</gz_frame_id>
+                <camera>
+                    <horizontal_fov>1.3962634</horizontal_fov>
+                    <image>
+                        <width>640</width>
+                        <height>480</height>
+                        <format>R8G8B8</format>
+                    </image>
+                    <clip>
+                        <near>0.1</near>
+                        <far>15</far>
+                    </clip>
+                    <depth_camera>
+                        <clip>
+                            <near>0.1</near>
+                            <far>15</far>
+                        </clip>
+                    </depth_camera>
+                    <optical_frame_id>depth_camera_optical</optical_frame_id>
+                </camera>
+            </sensor>
+        </gazebo>
+
+    </xacro:if>
 
 </xacro:macro>
 

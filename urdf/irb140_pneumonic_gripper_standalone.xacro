@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Standalone wrapper around irb140_pneumonic_gripper.xacro's macro, for
+  visualizing the gripper by itself (without the rest of the IRB140 arm).
+
+  irb140_pneumonic_gripper.xacro only defines a macro (no top-level links),
+  so it can be safely xacro:included by irb140.xacro without emitting
+  anything on its own. This file instantiates that macro against a dummy
+  "world" root so it can be run through xacro into a standalone URDF:
+
+    xacro irb140_pneumonic_gripper_standalone.xacro > irb140_pneumonic_gripper.urdf
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pneumatic_gripper_standalone">
+
+    <xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumonic_gripper.xacro"/>
+
+    <link name="world"/>
+
+    <xacro:pneumatic_gripper name="pneumatic_gripper" parent="world" xyz="0 0 0" rpy="0 0 0"/>
+
+</robot>
