@@ -14,6 +14,7 @@ from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
@@ -26,6 +27,22 @@ def generate_launch_description():
         description='Start RViz alongside the simulation',
     )
     default_rviz_config_path = os.path.join(pkg_share, 'config', 'urdf.rviz')
+
+    # Optional octomap_server mapping: consumes the wrist RGBD point cloud
+    # (bridged as /camera/depth/color/points in config/rgbd_bridge.yaml) and
+    # builds a 3D occupancy octree, publishing /octomap_binary, /octomap_full,
+    # /octomap_point_cloud_centers and a 2D /projected_map. Off by default so
+    # the sim comes up without the extra CPU cost; enable with use_octomap:=true.
+    declare_use_octomap = DeclareLaunchArgument(
+        'use_octomap',
+        default_value='false',
+        description='Run octomap_server to map the RGBD point cloud into an occupancy octree',
+    )
+    declare_octomap_resolution = DeclareLaunchArgument(
+        'octomap_resolution',
+        default_value='0.05',
+        description='Leaf/voxel size (metres) of the octomap occupancy octree',
+    )
 
     # sdformat's urdf->sdf conversion rewrites the URDF's package:// mesh URIs
     # to model://<package_name>/..., which gz-sim resolves by searching
@@ -125,6 +142,39 @@ def generate_launch_description():
         arguments=['--ros-args', '-p', f'config_file:={bridge_config_path}'],
     )
 
+    # octomap_server subscribes to "cloud_in"; remap it onto the bridged RGBD
+    # cloud. frame_id is the global fixed frame the octree accumulates in
+    # (the robot's URDF root is "world"); base_frame_id is used for the
+    # ground-plane filter / 2D projection. The cloud is published in the
+    # "depth_camera" frame (gz_frame_id in the gripper xacro), which TF already
+    # provides via robot_state_publisher.
+    octomap_server_node = Node(
+        package='octomap_server',
+        executable='octomap_server_node',
+        name='octomap_server',
+        output='screen',
+        condition=IfCondition(LaunchConfiguration('use_octomap')),
+        parameters=[{
+            'use_sim_time': True,
+            'resolution': ParameterValue(
+                LaunchConfiguration('octomap_resolution'), value_type=float
+            ),
+            'frame_id': 'world',
+            'base_frame_id': 'base_link',
+            'sensor_model.max_range': 5.0,
+            'filter_ground': False,
+            'latch': False,
+        }],
+        remappings=[('cloud_in', '/camera/depth/color/points')],
+    )
+
+    rqt_joint_trajectory_controller_node = Node(
+        package='rqt_joint_trajectory_controller',
+        executable='rqt_joint_trajectory_controller',
+        output='screen',
+        condition=IfCondition(LaunchConfiguration('use_octomap'))
+    )
+
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
@@ -176,6 +226,8 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_use_rviz,
+        declare_use_octomap,
+        declare_octomap_resolution,
         set_gz_resource_path,
         gz_sim,
         robot_state_publisher_node,
@@ -183,6 +235,8 @@ def generate_launch_description():
         camera_bridge_node,
         spawn_robot_node,
         rviz_node,
+        octomap_server_node,
+        rqt_joint_trajectory_controller_node,
         delay_joint_state_broadcaster,
         delay_arm_controller,
         delay_gripper_controller,

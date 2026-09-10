@@ -105,7 +105,7 @@
     <include>
       <uri>model://abb_irb140_description/models/robot_lab_table</uri>
       <name>robot_lab_table</name>
-      <pose>0.979 0 0 0 0 0</pose>
+      <pose>1.179 0 0 0 0 0</pose>
     </include>
   </world>
 </sdf>
