@@ -21,7 +21,7 @@ install(TARGETS pneumatic_gripper_controller
   DESTINATION lib/${PROJECT_NAME})
 
 install(
-  DIRECTORY urdf meshes launch config models worlds
+  DIRECTORY urdf meshes launch config models worlds maps
   DESTINATION share/${PROJECT_NAME}
 )
 

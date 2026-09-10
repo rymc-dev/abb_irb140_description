@@ -9,7 +9,7 @@ from launch.actions import (
     RegisterEventHandler,
     SetEnvironmentVariable,
 )
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
@@ -28,20 +28,32 @@ def generate_launch_description():
     )
     default_rviz_config_path = os.path.join(pkg_share, 'config', 'urdf.rviz')
 
-    # Optional octomap_server mapping: consumes the wrist RGBD point cloud
-    # (bridged as /camera/depth/color/points in config/rgbd_bridge.yaml) and
-    # builds a 3D occupancy octree, publishing /octomap_binary, /octomap_full,
-    # /octomap_point_cloud_centers and a 2D /projected_map. Off by default so
-    # the sim comes up without the extra CPU cost; enable with use_octomap:=true.
+    # octomap_server publishes /octomap_binary, /octomap_full,
+    # /octomap_point_cloud_centers, a 2D /projected_map and the
+    # occupied/free marker arrays -- either way, the topic interface is the same:
+    #   use_octomap:=true  -> live mapping: consume the wrist RGBD point cloud
+    #     (bridged as /camera/depth/color/points in config/rgbd_bridge.yaml) and
+    #     build the occupancy octree online (extra CPU cost).
+    #   use_octomap:=false -> static: load the pre-built octree named by
+    #     octomap_file (maps/robot_lab_sim.ot by default) and serve it latched,
+    #     no per-frame cost. This is the default.
     declare_use_octomap = DeclareLaunchArgument(
         'use_octomap',
         default_value='false',
-        description='Run octomap_server to map the RGBD point cloud into an occupancy octree',
+        description=(
+            'true: run octomap_server live-mapping the RGBD point cloud; '
+            'false: serve the pre-built octree from octomap_file'
+        ),
     )
     declare_octomap_resolution = DeclareLaunchArgument(
         'octomap_resolution',
         default_value='0.05',
-        description='Leaf/voxel size (metres) of the octomap occupancy octree',
+        description='Leaf/voxel size (metres) of the octomap occupancy octree (use_octomap:=true only)',
+    )
+    declare_octomap_file = DeclareLaunchArgument(
+        'octomap_file',
+        default_value=os.path.join(pkg_share, 'maps', 'robot_lab_sim.ot'),
+        description='Pre-built octree (.ot/.bt) served when use_octomap:=false',
     )
 
     # sdformat's urdf->sdf conversion rewrites the URDF's package:// mesh URIs
@@ -168,6 +180,27 @@ def generate_launch_description():
         remappings=[('cloud_in', '/camera/depth/color/points')],
     )
 
+    # use_octomap:=false counterpart: the same octomap_server executable, but in
+    # file-load mode. OctomapServer's constructor reads the "octomap_path"
+    # parameter and calls openFile() at startup, which loads the .ot/.bt octree
+    # and publishAll()s it on the latched topics -- identical interface to the
+    # live node above. "cloud_in" is left unremapped (nothing publishes it) so
+    # the served map stays exactly as built.
+    octomap_static_server_node = Node(
+        package='octomap_server',
+        executable='octomap_server_node',
+        name='octomap_server',
+        output='screen',
+        condition=UnlessCondition(LaunchConfiguration('use_octomap')),
+        parameters=[{
+            'use_sim_time': True,
+            'octomap_path': LaunchConfiguration('octomap_file'),
+            'frame_id': 'world',
+            'base_frame_id': 'base_link',
+            'latch': True,
+        }],
+    )
+
     rqt_joint_trajectory_controller_node = Node(
         package='rqt_joint_trajectory_controller',
         executable='rqt_joint_trajectory_controller',
@@ -228,6 +261,7 @@ def generate_launch_description():
         declare_use_rviz,
         declare_use_octomap,
         declare_octomap_resolution,
+        declare_octomap_file,
         set_gz_resource_path,
         gz_sim,
         robot_state_publisher_node,
@@ -236,6 +270,7 @@ def generate_launch_description():
         spawn_robot_node,
         rviz_node,
         octomap_server_node,
+        octomap_static_server_node,
         rqt_joint_trajectory_controller_node,
         delay_joint_state_broadcaster,
         delay_arm_controller,

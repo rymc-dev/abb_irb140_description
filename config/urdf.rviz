@@ -362,6 +362,20 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /hybraut/hybraut_irb140/ball_markers
       Value: true
+    - Class: octomap_rviz_plugins/OccupancyGrid
+      Name: OctoMap
+      Enabled: true
+      Topic:
+        Depth: 5
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /octomap_full
+      Voxel Rendering: Occupied Voxels
+      Voxel Coloring: Z-Axis
+      Octomap Binary: false
+      Max. Octree Depth: 16
+      Alpha: 1
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
