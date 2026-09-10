@@ -1,0 +1,48 @@
+# abb_driver (ROS 1) --rosbridge WebSocket--> relay --> native ROS 2 Jazzy graph
+#
+#   docker compose build
+#   docker compose up
+#
+# Why not ros1_bridge: it must be built against a ROS 1 + a ROS 2 in one image,
+# and the only ROS 2 that co-installs with Noetic is Foxy, whose Fast-DDS 2.1
+# cannot exchange discovery/data with Jazzy's Fast-DDS 2.14 (it crashes). This
+# splits the problem: rosbridge carries the ROS 1 graph over a plain WebSocket
+# (no DDS), and a same-distro Jazzy relay re-publishes it onto the host graph.
+#
+# network_mode: host  -> abb_driver reaches the IRC5 (TCP 11000/11002); relay
+#                        shares the host DDS.
+# ipc: host           -> relay and host share /dev/shm so Fast-DDS SHM works
+#                        (harmless for CycloneDDS).
+services:
+  abb-ros1:
+    build:
+      context: .
+      dockerfile: Dockerfile.ros1
+    image: abb-ros1:noetic
+    container_name: abb-ros1
+    network_mode: host
+    environment:
+      ROBOT_IP: "192.168.125.1"     # ABB IRC5
+      J23_COUPLED: "false"          # true only for the J2/J3 parallel-linkage variant
+      ROSBRIDGE_PORT: "9090"
+    restart: unless-stopped
+    stop_grace_period: 10s
+
+  abb-relay:
+    build:
+      context: .
+      dockerfile: Dockerfile.relay
+    image: abb-relay:jazzy
+    container_name: abb-relay
+    network_mode: host
+    ipc: host
+    depends_on: [abb-ros1]
+    environment:
+      ROS_DOMAIN_ID: "0"                       # match the host
+      RMW_IMPLEMENTATION: "rmw_cyclonedds_cpp"  # match the host's RMW (host env uses CycloneDDS)
+      ROSBRIDGE_URL: "ws://127.0.0.1:9090"
+      FJT_ACTION_NAME: "/arm_controller/follow_joint_trajectory"   # what MoveIt calls
+      SPEED_SCALE: "2.0"        # /joint_path_command TOPIC path only: 2.0 = double speed
+      ACTION_SPEED_SCALE: "1.0" # action path: keep 1.0, use MoveIt's velocity scaling instead
+    restart: unless-stopped
+    stop_grace_period: 10s

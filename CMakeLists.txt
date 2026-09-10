@@ -7,9 +7,18 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(CURL REQUIRED)
+
+add_executable(pneumatic_gripper_controller src/pneumatic_gripper_controller.cpp)
+target_include_directories(pneumatic_gripper_controller PRIVATE include)
+ament_target_dependencies(pneumatic_gripper_controller rclcpp std_srvs sensor_msgs)
+target_link_libraries(pneumatic_gripper_controller CURL::libcurl)
+
+install(TARGETS pneumatic_gripper_controller
+  DESTINATION lib/${PROJECT_NAME})
 
 install(
   DIRECTORY urdf meshes launch config models worlds

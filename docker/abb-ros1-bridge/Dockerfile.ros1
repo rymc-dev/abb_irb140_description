@@ -1,0 +1,27 @@
+# ROS 1 side: abb_driver (talks to the ABB IRC5) + rosbridge_server.
+# rosbridge exposes the ROS 1 graph over a plain WebSocket (JSON) on :9090.
+# The Jazzy relay (Dockerfile.relay) consumes that and republishes native ROS 2.
+# No DDS here, so none of the Foxy<->Jazzy Fast-DDS version incompatibility.
+FROM ros:noetic-ros-base-focal
+
+SHELL ["/bin/bash", "-c"]
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ros-noetic-industrial-core \
+        ros-noetic-abb-driver \
+        ros-noetic-rosbridge-suite \
+        ros-noetic-tf2-web-republisher \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY robot.launch /robot.launch
+COPY entrypoint-ros1.sh /entrypoint-ros1.sh
+RUN chmod +x /entrypoint-ros1.sh
+
+ENV ROBOT_IP=192.168.125.1 \
+    J23_COUPLED=false \
+    ROSBRIDGE_PORT=9090 \
+    ROS_MASTER_URI=http://localhost:11311
+
+EXPOSE 9090
+ENTRYPOINT ["/entrypoint-ros1.sh"]

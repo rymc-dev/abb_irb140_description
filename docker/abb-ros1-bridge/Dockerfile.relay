@@ -1,0 +1,31 @@
+# ROS 2 side: consumes the ROS 1 rosbridge WebSocket and republishes native
+# Jazzy topics onto the host graph. Same ROS 2 distro as the host, so DDS
+# discovery/data with host nodes just works.
+FROM ros:jazzy-ros-base-noble
+
+SHELL ["/bin/bash", "-c"]
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        python3-pip \
+        ros-jazzy-rmw-cyclonedds-cpp \
+        ros-jazzy-rmw-fastrtps-cpp \
+        ros-jazzy-control-msgs \
+    && pip3 install --no-cache-dir --break-system-packages "roslibpy>=1.7,<2" \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY relay/relay_node.py /relay_node.py
+
+ENV ROSBRIDGE_URL=ws://127.0.0.1:9090 \
+    JOINT_STATES_TOPIC=/joint_states \
+    ROBOT_STATUS_TOPIC=/robot_status \
+    JOINT_PATH_COMMAND_TOPIC=/joint_path_command \
+    FEEDBACK_STATES_TOPIC=/feedback_states \
+    FJT_ACTION_NAME=/arm_controller/follow_joint_trajectory \
+    STOP_MOTION_SERVICE=/stop_motion \
+    SPEED_SCALE=2.0 \
+    ACTION_SPEED_SCALE=1.0 \
+    GOAL_TOLERANCE=0.02 \
+    GOAL_TIME_SLACK=8.0
+
+ENTRYPOINT ["bash", "-lc", "source /opt/ros/jazzy/setup.bash && exec python3 /relay_node.py"]

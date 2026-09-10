@@ -15,3 +15,20 @@ $ ros2 action send_goal /arm_controller/follow_joint_trajectory control_msgs/act
   }
 }"
 ```
+
+
+actuating grippers from remote device of controller, abb driver does not contain implementation for this, instead we utilize RWS on signal closeGrippersOut via this command: 
+
+its importatn to ensure the signal utilzies all opening the gripper 
+
+"""bash
+curl --digest -u 'Default User:robotics' \
+  -d 'lvalue=1' \
+  'http://192.168.125.1/rw/iosystem/signals/closeGrippersOut?action=set'
+ """ 
+
+ closing the gripper: 
+ """bash
+
+ """
+ we just set lvalue=0
