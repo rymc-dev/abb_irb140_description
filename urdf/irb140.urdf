@@ -661,12 +661,18 @@
   </gazebo>
   <!-- Standard ROS optical frame (z forward, x right, y down) relative to
              the camera body link; camera_info / point clouds are published in
-             this frame. -->
+             this frame. depth_camera's own +X is the gz view axis (see the
+             mount joint above), so this applies the standard body->optical
+             fixed rotation (roll -90, yaw -90) to actually get there;
+             identity here would leave depth_camera_optical pointing the same
+             way as depth_camera despite the data being genuinely
+             optical-convention, which is what was skewing the RViz
+             projection. -->
   <link name="depth_camera_optical"/>
   <joint name="depth_camera_to_optical" type="fixed">
     <parent link="depth_camera"/>
     <child link="depth_camera_optical"/>
-    <origin rpy="0.0 0.0 0" xyz="0 0 0"/>
+    <origin rpy="-1.57079632679 0 -1.57079632679" xyz="0 0 0"/>
   </joint>
   <!-- reference="depth_camera" binds the gz-sim sensor to that link.
              worlds/robot_lab.world already loads gz-sim-sensors-system. gz
