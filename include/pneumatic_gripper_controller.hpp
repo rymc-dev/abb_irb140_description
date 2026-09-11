@@ -43,8 +43,8 @@ private:
   // --- Fixed controller configuration ------------------------------------
   static constexpr const char * DEFAULT_ROBOT_IP = "192.168.125.1";
   static constexpr double DEFAULT_GRIPPER_EFFORT_PERCENTAGE = 50.0;
-  static constexpr const char * USERNAME = "ros_cli";
-  static constexpr const char * PASSWORD = "abb_irb140";
+  static constexpr const char * USERNAME = "Default User";
+  static constexpr const char * PASSWORD = "robotics";
   static constexpr const char * SIGNAL_NAME = "closeGrippersOut";
   static constexpr double TIMEOUT = 5.0;
 
