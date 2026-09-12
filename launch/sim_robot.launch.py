@@ -140,6 +140,16 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
     )
 
+    pneumatic_gripper_controller_node = Node(
+        package='abb_irb140_description',
+        executable='pneumatic_gripper_controller',
+        name='pneumatic_gripper_controller',
+        output='screen',
+        parameters=[{
+            'sim': True,
+        }],
+    )
+
     # Bridges the rgbd_camera sensor (defined on the depth_camera link in
     # irb140.urdf) from gz-sim into ROS 2 under RealSense-style topic names.
     # The gz<->ROS topic remapping and GZ_TO_ROS direction are declared in
@@ -154,12 +164,27 @@ def generate_launch_description():
         arguments=['--ros-args', '-p', f'config_file:={bridge_config_path}'],
     )
 
+    # config/rgbd_bridge.yaml bridges the raw cloud onto .../points_raw
+    # instead of the final .../points name; this node relabels its
+    # header.frame_id from the (misleading) "depth_camera_optical" gz-sensors
+    # always stamps it with to "depth_camera", which actually matches the
+    # data's axes - see scripts/fix_depth_points_frame.py for the full
+    # explanation and the gz-sensors upstream issues it's working around.
+    fix_depth_points_frame_node = Node(
+        package='abb_irb140_description',
+        executable='fix_depth_points_frame.py',
+        name='fix_depth_points_frame',
+        output='screen',
+        parameters=[{'use_sim_time': True}],
+    )
+
     # octomap_server subscribes to "cloud_in"; remap it onto the bridged RGBD
     # cloud. frame_id is the global fixed frame the octree accumulates in
     # (the robot's URDF root is "world"); base_frame_id is used for the
     # ground-plane filter / 2D projection. The cloud is published in the
-    # "depth_camera" frame (gz_frame_id in the gripper xacro), which TF already
-    # provides via robot_state_publisher.
+    # "depth_camera" frame (relabelled by fix_depth_points_frame_node above,
+    # not by gz-sensors itself), which TF already provides via
+    # robot_state_publisher.
     octomap_server_node = Node(
         package='octomap_server',
         executable='octomap_server_node',
@@ -267,6 +292,7 @@ def generate_launch_description():
         robot_state_publisher_node,
         clock_bridge_node,
         camera_bridge_node,
+        fix_depth_points_frame_node,
         spawn_robot_node,
         rviz_node,
         octomap_server_node,
@@ -275,4 +301,5 @@ def generate_launch_description():
         delay_joint_state_broadcaster,
         delay_arm_controller,
         delay_gripper_controller,
+        pneumatic_gripper_controller_node,
     ])

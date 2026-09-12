@@ -52,6 +52,12 @@ PneumaticGripperController::PneumaticGripperController()
     "gripper_trigger",
     std::bind(&PneumaticGripperController::gripper_trigger_cb, this, _1, _2));
 
+  if (sim_) {
+    gripper_action_client_ =
+      rclcpp_action::create_client<control_msgs::action::GripperCommand>(
+      this, GRIPPER_ACTION_NAME);
+  }
+
   // On the real robot the sim's joint_state_broadcaster is absent, so mock the
   // finger joint states here. In sim we stay out of the way of the broadcaster.
   if (!sim_) {
@@ -91,9 +97,7 @@ void PneumaticGripperController::gripper_trigger_cb(
     this->get_logger(), "Gripper trigger requested: %s", action_str.c_str());
 
   if (sim_) {
-    response->success = true;
-    response->message = "[SIM] Gripper " + action_str + " command accepted";
-    RCLCPP_INFO(this->get_logger(), "%s", response->message.c_str());
+    send_sim_gripper_goal(request->data, response);
     return;
   }
 
@@ -112,6 +116,61 @@ void PneumaticGripperController::gripper_trigger_cb(
     response->message = "Failed to " + action_str + " gripper. " + error;
     RCLCPP_ERROR(this->get_logger(), "%s", response->message.c_str());
   }
+}
+
+void PneumaticGripperController::send_sim_gripper_goal(
+  bool close, std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  const std::string action_str = close ? "CLOSE" : "OPEN";
+
+  if (!gripper_action_client_->wait_for_action_server(
+      std::chrono::duration<double>(GRIPPER_ACTION_SERVER_WAIT)))
+  {
+    response->success = false;
+    response->message =
+      "[SIM] Gripper " + action_str + " failed: gripper_controller/gripper_cmd "
+      "action server not available -- is sim_robot.launch.py's "
+      "gripper_controller_spawner running?";
+    RCLCPP_ERROR(this->get_logger(), "%s", response->message.c_str());
+    return;
+  }
+
+  control_msgs::action::GripperCommand::Goal goal;
+  goal.command.position = close ? closed_position_ : open_position_;
+  // 0.0 defers to gripper_controller's own max_effort (config/controllers.yaml).
+  goal.command.max_effort = 0.0;
+
+  rclcpp_action::Client<control_msgs::action::GripperCommand>::SendGoalOptions options;
+  options.goal_response_callback =
+    [this, action_str](
+    const rclcpp_action::ClientGoalHandle<control_msgs::action::GripperCommand>::SharedPtr
+    & goal_handle) {
+      if (!goal_handle) {
+        RCLCPP_ERROR(
+          this->get_logger(), "[SIM] Gripper %s goal was rejected", action_str.c_str());
+      } else {
+        RCLCPP_INFO(
+          this->get_logger(), "[SIM] Gripper %s goal accepted", action_str.c_str());
+      }
+    };
+  options.result_callback =
+    [this, action_str](
+    const rclcpp_action::ClientGoalHandle<control_msgs::action::GripperCommand>::WrappedResult
+    & result) {
+      if (result.code != rclcpp_action::ResultCode::SUCCEEDED) {
+        RCLCPP_WARN(
+          this->get_logger(), "[SIM] Gripper %s goal did not succeed (code %d)",
+          action_str.c_str(), static_cast<int>(result.code));
+      }
+    };
+
+  gripper_action_client_->async_send_goal(goal, options);
+
+  // Fire-and-forget: report success once the goal has been dispatched, without
+  // waiting for it to be accepted or for the fingers to finish moving.
+  response->success = true;
+  response->message = "[SIM] Gripper " + action_str + " goal sent";
+  RCLCPP_INFO(this->get_logger(), "%s", response->message.c_str());
 }
 
 void PneumaticGripperController::publish_gripper_joint_states()

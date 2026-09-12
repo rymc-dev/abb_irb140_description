@@ -12,6 +12,8 @@ J23_COUPLED="${J23_COUPLED:-false}"
 ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}"
 RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}"   # match the host
 SPEED_SCALE="${SPEED_SCALE:-2.0}"                               # 2.0 = double motion speed
+GOAL_TIME_SLACK="${GOAL_TIME_SLACK:-20.0}"                      # FJT action deadline slack past
+                                                                 # a goal's time_from_start (s)
 
 case "${1:-up}" in
   build)
@@ -29,6 +31,7 @@ case "${1:-up}" in
       -e ROSBRIDGE_URL=ws://127.0.0.1:9090 -e SPEED_SCALE="$SPEED_SCALE" \
       -e FJT_ACTION_NAME="${FJT_ACTION_NAME:-/arm_controller/follow_joint_trajectory}" \
       -e ACTION_SPEED_SCALE="${ACTION_SPEED_SCALE:-1.0}" \
+      -e GOAL_TIME_SLACK="$GOAL_TIME_SLACK" \
       abb-relay:jazzy
     echo "up. check:  ROS_DOMAIN_ID=$ROS_DOMAIN_ID ros2 topic echo /joint_states"
     ;;

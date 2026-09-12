@@ -44,5 +44,15 @@ services:
       FJT_ACTION_NAME: "/arm_controller/follow_joint_trajectory"   # what MoveIt calls
       SPEED_SCALE: "2.0"        # /joint_path_command TOPIC path only: 2.0 = double speed
       ACTION_SPEED_SCALE: "1.0" # action path: keep 1.0, use MoveIt's velocity scaling instead
+      # Deadline for the FJT action = the goal's own time_from_start + this
+      # slack (relay_node.py's _execute_fjt). Was the code default (8.0s),
+      # which was fine while the demo asked for 20s/move (28s total budget)
+      # but started aborting real moves short of tolerance once the demo's
+      # per-move durations got shorter (see irb140_pick_and_place_demo_real.py) --
+      # e.g. a goal seen aborting at ~10.7s with max_err still 0.12 rad,
+      # in_motion=True: it was still genuinely converging, just cut off early.
+      # This doesn't slow the robot down; it only affects how long we wait
+      # before giving up on a goal that hasn't settled yet.
+      GOAL_TIME_SLACK: "20.0"
     restart: unless-stopped
     stop_grace_period: 10s

@@ -7,8 +7,10 @@
 #include <memory>
 #include <string>
 
+#include <control_msgs/action/gripper_command.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/timer.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 
@@ -23,8 +25,13 @@
  *   data = false -> lvalue 0 -> open gripper
  *
  * This is the C++ port of scripts/gripper_trigger_node.py. When the `sim`
- * parameter is true the HTTP call is skipped and every request succeeds, so the
- * same node can be used against the real controller or in simulation.
+ * parameter is true the HTTP call is skipped; instead the request is forwarded
+ * as a `control_msgs/action/GripperCommand` goal to the Gazebo
+ * `gripper_controller` (see config/controllers.yaml), so the same
+ * `/gripper_trigger` interface drives the real controller or the simulated
+ * one. The service responds as soon as the goal is accepted (fire-and-forget)
+ * without waiting for the simulated fingers to finish moving, mirroring how
+ * the real-robot branch only confirms the HTTP signal was set.
  *
  * On the real robot (`sim` false) nothing else publishes joint states for the
  * 12 pneumatic gripper finger joints (in sim, gz_ros2_control +
@@ -47,6 +54,8 @@ private:
   static constexpr const char * PASSWORD = "robotics";
   static constexpr const char * SIGNAL_NAME = "closeGrippersOut";
   static constexpr double TIMEOUT = 5.0;
+  static constexpr const char * GRIPPER_ACTION_NAME = "gripper_controller/gripper_cmd";
+  static constexpr double GRIPPER_ACTION_SERVER_WAIT = 1.0;  // seconds
 
   // Mocked finger joint state (only published when `sim` is false).
   static constexpr double DEFAULT_OPEN_POSITION = 0.0;
@@ -87,6 +96,10 @@ private:
   // --- Service -------------------------------------------------------
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr gripper_trigger_srv_;
 
+  // --- Sim gripper action client (sim only) ---------------------------
+  rclcpp_action::Client<control_msgs::action::GripperCommand>::SharedPtr
+    gripper_action_client_;
+
   // --- Mocked joint state publishing (real robot only) ----------------
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_;
   rclcpp::TimerBase::SharedPtr joint_state_timer_;
@@ -99,6 +112,17 @@ private:
   /// Timer callback: publishes the 12 finger joints on /joint_states, all at
   /// closed_position_ when gripper_closed_ is set, otherwise open_position_.
   void publish_gripper_joint_states();
+
+  /**
+   * Sim-mode gripper trigger: forwards the request as a GripperCommand goal
+   * to gripper_action_client_ and responds as soon as the goal is accepted
+   * (fire-and-forget -- does not wait for the fingers to finish moving).
+   *
+   * @param close     true to close the gripper, false to open it.
+   * @param response  [out] SetBool response to fill in before returning.
+   */
+  void send_sim_gripper_goal(
+    bool close, std::shared_ptr<std_srvs::srv::SetBool::Response> response);
 
   /**
    * POST `lvalue` to the RWS signal endpoint using HTTP digest auth.
