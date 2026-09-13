@@ -36,16 +36,15 @@
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
-# Bridged onto an intermediate topic, not the final /camera/depth/color/points
-# name: gz-sensors' rgbd_camera always stamps this message's header with
-# "depth_camera_optical" (optical_frame_id), but the XYZ data itself is never
-# actually rotated into optical convention - it stays in the sensor's raw
-# body-frame axes (+X out of the lens), same as the un-rotated "depth_camera"
-# link. That mismatch is what skews the cloud in RViz. See
-# gazebosim/gz-sensors#29 and #545 (open upstream). scripts/
-# fix_depth_points_frame.py relabels header.frame_id to "depth_camera" (which
-# actually matches the data) and republishes as /camera/depth/color/points.
-- ros_topic_name: "/camera/depth/color/points_raw"
+# The rgbd_camera sensor in urdf/irb140_pneumatic_gripper.xacro is attached
+# to depth_camera (body convention, +X forward) rather than
+# depth_camera_optical, because gz-sim renders using the attached link's own
+# local +X as the view axis. gz_frame_id/optical_frame_id are both set to
+# depth_camera to match, so this bridges straight onto the final topic name
+# with no relabel/republish step needed. depth_camera_optical still exists
+# as a pure TF frame (the real optical rotation) for anyone who wants to
+# tf2-transform this cloud into true optical convention on demand.
+- ros_topic_name: "/camera/depth/color/points"
   gz_topic_name: "/rgbd_camera/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "gz.msgs.PointCloudPacked"

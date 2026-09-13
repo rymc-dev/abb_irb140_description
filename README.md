@@ -211,10 +211,6 @@ Both launch files expose the same `use_octomap` switch:
   soon as `/joint_states` shows the target has been reached (rather than
   waiting out the commanded duration), so it doesn't assume anything about
   the exact motion timing of whatever is executing the trajectory.
-- `scripts/fix_depth_points_frame.py` — republishes the simulated wrist
-  camera's point cloud with a corrected `frame_id`, working around a gz-sensors
-  upstream bug (see the script's docstring for details). Run automatically
-  by `sim_robot.launch.py`; not needed on the real robot.
 
 Both packaged as executables via `CMakeLists.txt`, so they run with:
 
@@ -234,10 +230,6 @@ they're uploaded, e.g. to YouTube or an institutional host.)
 
 ## Known limitations
 
-- The simulated wrist camera's point cloud is affected by an open upstream
-  gz-sensors bug (frame convention mismatch on `PointCloudPacked` output);
-  `scripts/fix_depth_points_frame.py` works around it. See that script's
-  docstring for the full explanation and upstream issue links.
 - `real_robot.launch.py` assumes a separate ROS 1↔2 bridge is already
   publishing the arm's `/joint_states` and
   `/arm_controller/follow_joint_trajectory` — it is not started by anything

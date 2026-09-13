@@ -73,12 +73,27 @@
         <!-- Geometry-less sensor frame: the physical camera is already
              sculpted into the base_link visual mesh, so this link carries no
              visual/collision of its own (that would just duplicate the mesh
-             as a second, floating box). It exists purely so the Gazebo
+             as a second, floating box). It exists purely so the gz-sim
              rgbd_camera sensor below has a link to attach to, positioned and
              rotated (local +X is the gz camera view axis) to coincide with
              the real camera on the mesh, along the gripper's approach
-             direction (+Z of ${name}_base_link). Tune the joint origin below
-             to reframe the grasp view. -->
+             direction (+Z of ${name}_base_link).
+
+             IMPORTANT: this rpy is body convention (+X forward), NOT the
+             standard ROS optical rotation, and that is deliberate. gz-sim's
+             rgbd_camera sensor renders, and generates its raw
+             PointCloudPacked XYZ data, using the SENSOR-ATTACHED LINK'S OWN
+             local +X as the forward/view axis, with no extra rotation
+             applied for optical_frame_id (that tag only relabels message
+             headers). A link that is genuinely in ROS optical convention
+             (Z forward) can therefore never be a valid attachment point:
+             its local +X would point 90 deg away from the real scene by
+             definition. (Verified the hard way: briefly merging this link
+             with depth_camera_optical below and giving the merged link the
+             optical rotation produced a blank color image and points
+             landing at +X instead of in front of the camera.)
+
+             Tune the joint origin below to reframe the grasp view. -->
         <link name="depth_camera">
             <inertial>
                 <mass value="0.05"/>
@@ -94,21 +109,26 @@
 
         <!-- Keep depth_camera as its own link/frame in the converted SDF
              instead of letting urdf2sdf lump it (and the sensor) back into
-             link_6 through the fixed-joint chain. -->
+             link_6 through the fixed-joint chain. Needed here because the
+             gz-sim sensor is attached to this link; depth_camera_optical
+             below carries no sensor and no annotation, so it's fine if SDF
+             conversion lumps it away, robot_state_publisher still publishes
+             its TF frame straight from this URDF regardless of what the
+             SDF/physics side does. -->
         <gazebo reference="${name}_to_depth_camera">
             <preserveFixedJoint>true</preserveFixedJoint>
             <disableFixedJointLumping>true</disableFixedJointLumping>
         </gazebo>
 
-        <!-- Standard ROS optical frame (z forward, x right, y down) relative to
-             the camera body link; camera_info / point clouds are published in
-             this frame. depth_camera's own +X is the gz view axis (see the
-             mount joint above), so this applies the standard body->optical
-             fixed rotation (roll -90, yaw -90) to actually get there;
-             identity here would leave depth_camera_optical pointing the same
-             way as depth_camera despite the data being genuinely
-             optical-convention, which is what was skewing the RViz
-             projection. -->
+        <!-- Pure TF convenience frame: the standard ROS optical rotation
+             (Z forward, X right, Y down) relative to depth_camera, for
+             parity with the real D405's depth_camera_optical frame in
+             real_robot.launch.py. Nothing in sim publishes data under this
+             frame directly, the gz-sim sensor stays attached to
+             depth_camera above (see why on that link's comment). Any
+             consumer that wants genuinely optical-convention points can
+             tf2-transform the /camera/depth/color/points cloud (published
+             in the depth_camera frame) into this frame on demand. -->
         <link name="depth_camera_optical"/>
         <joint name="depth_camera_to_optical" type="fixed">
             <parent link="depth_camera"/>
@@ -116,7 +136,15 @@
             <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
         </joint>
 
-        <!-- reference="depth_camera" binds the gz-sim sensor to that link.
+        <!-- reference="depth_camera" binds the gz-sim sensor to the
+             body-convention link above, whose local +X is the real view
+             axis, see that link's comment for why. gz_frame_id and
+             optical_frame_id below are both set to depth_camera (not
+             depth_camera_optical) so the published frame_id always matches
+             what the data actually is; despite the SDF tag being named
+             optical_frame_id, gz-sim uses it as a generic "frame_id to
+             stamp these messages with" knob, not a promise to rotate
+             anything into optical convention.
              worlds/robot_lab.world already loads gz-sim-sensors-system. gz
              publishes /rgbd_camera/{image,depth_image,points,camera_info};
              those are remapped to RealSense-style ROS 2 names by
@@ -127,18 +155,6 @@
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
                 <topic>rgbd_camera</topic>
-                <!-- Deliberately the non-optical frame: gz-sensors' rgbd_camera
-                     generates the raw PointCloudPacked XYZ data in the sensor's
-                     own body-convention axes (+X out of the lens), and never
-                     rotates it into optical convention even though the image/
-                     depth_image/camera_info topics correctly use
-                     optical_frame_id below. Labelling /points with
-                     depth_camera_optical (Z-forward) mismatches that data and
-                     produces a 90-degree-skewed cloud in RViz; depth_camera
-                     (X-forward, same convention the mount joint above uses)
-                     matches what's actually in the message.
-                     See gazebosim/gz-sensors#29 and #545 (open, unresolved
-                     upstream as of Gazebo Harmonic). -->
                 <gz_frame_id>depth_camera</gz_frame_id>
                 <camera>
                     <horizontal_fov>1.3962634</horizontal_fov>
@@ -157,7 +173,7 @@
                             <far>15</far>
                         </clip>
                     </depth_camera>
-                    <optical_frame_id>depth_camera_optical</optical_frame_id>
+                    <optical_frame_id>depth_camera</optical_frame_id>
                 </camera>
             </sensor>
         </gazebo>

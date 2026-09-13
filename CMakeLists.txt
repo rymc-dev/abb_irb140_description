@@ -24,7 +24,6 @@ install(TARGETS pneumatic_gripper_controller
 install(PROGRAMS
   scripts/irb140_pick_and_place_demo_real.py
   scripts/irb140_pick_and_place_demo_sim.py
-  scripts/fix_depth_points_frame.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
