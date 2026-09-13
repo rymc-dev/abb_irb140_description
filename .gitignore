@@ -11,6 +11,10 @@ __pycache__/
 
 # large videos
 docs/videos/*
+docs/*.mp4
+docs/*.MOV
+docs/*.mov
+docs/*.avi
 
 # Distribution / packaging
 .Python
