@@ -24,10 +24,9 @@
  *   data = true  -> lvalue 1 -> close gripper
  *   data = false -> lvalue 0 -> open gripper
  *
- * This is the C++ port of scripts/gripper_trigger_node.py. When the `sim`
- * parameter is true the HTTP call is skipped; instead the request is forwarded
- * as a `control_msgs/action/GripperCommand` goal to the Gazebo
- * `gripper_controller` (see config/controllers.yaml), so the same
+ * When the `sim` parameter is true the HTTP call is skipped; instead the
+ * request is forwarded as a `control_msgs/action/GripperCommand` goal to
+ * the Gazebo `gripper_controller` (see config/controllers.yaml), so the same
  * `/gripper_trigger` interface drives the real controller or the simulated
  * one. The service responds as soon as the goal is accepted (fire-and-forget)
  * without waiting for the simulated fingers to finish moving, mirroring how

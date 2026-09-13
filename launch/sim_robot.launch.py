@@ -117,7 +117,7 @@ def generate_launch_description():
     )
 
     # No separate robot_state_publisher / joint_state_publisher_gui here (unlike
-    # abb_irb140.launch.py's standalone preview) -- this RViz instance just
+    # a standalone URDF preview) -- this RViz instance just
     # subscribes to the /tf already published by robot_state_publisher_node
     # above, which is itself driven by the real /joint_states coming from
     # arm_controller/joint_state_broadcaster in the running sim.

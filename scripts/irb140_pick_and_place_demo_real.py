@@ -38,7 +38,7 @@ WAYPOINTS = {
 # biggest joint, so 20s worked out to ~0.03 rad/s (~1.7 deg/s). Instead, scale
 # each move's duration to its largest single-joint delta so nearby waypoints
 # aren't held to the same time budget as far ones. Tune the pace here (safe to
-# push faster: the docker/abb-ros1-bridge relay's GOAL_TIME_SLACK gives plenty
+# push faster: the ROS1 bridge relay's GOAL_TIME_SLACK gives plenty
 # of deadline margin past this, and move_to() advances the instant
 # /joint_states shows we're actually within tolerance regardless of whether
 # the robot hits this exact pace):
@@ -51,9 +51,9 @@ FIRST_MOVE_MAX_EXPECTED_DELTA_RAD = 1.5
 FIRST_MOVE_DURATION_SEC = max(MIN_MOVE_DURATION_SEC,
                                FIRST_MOVE_MAX_EXPECTED_DELTA_RAD / NOMINAL_JOINT_SPEED_RAD_S)
 
-# How close (rad, per joint) counts as "arrived" -- matches the ABB bridge's
-# own GOAL_TOLERANCE default (docker/abb-ros1-bridge/relay/relay_node.py) so
-# both sides agree on what "reached" means.
+# How close (rad, per joint) counts as "arrived" -- matches the ROS1 bridge
+# relay's own GOAL_TOLERANCE default (not part of this package) so both
+# sides agree on what "reached" means.
 JOINT_TOLERANCE_RAD = 0.02
 
 GOAL_TIME_TOLERANCE_SEC = 10.0

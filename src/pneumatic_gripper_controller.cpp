@@ -1,5 +1,3 @@
-// C++ port of scripts/gripper_trigger_node.py.
-//
 // Provides a std_srvs/srv/SetBool service that opens / closes the ABB IRB140
 // pneumatic gripper by setting a digital output signal on the controller via
 // the Robot Web Services (RWS) REST API using HTTP digest authentication.

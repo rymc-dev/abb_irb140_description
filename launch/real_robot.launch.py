@@ -9,14 +9,14 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
-# Real-hardware counterpart to gazebo.launch.py.
+# Real-hardware counterpart to sim_robot.launch.py.
 #
 # The real IRB140's arm is NOT driven by anything in this launch file -- it
-# comes from the separate docker/abb-ros1-bridge stack (started independently,
-# see that directory's README: `cd docker/abb-ros1-bridge && ./run.sh up`),
-# which bridges the IRC5's ROS 1 abb_driver onto the host ROS 2 graph. That
-# bridge already publishes the real /joint_states and exposes
-# /arm_controller/follow_joint_trajectory directly, so unlike gazebo.launch.py
+# comes from a separate bridge stack (not part of this package, started
+# independently), which relays the IRC5's ROS 1 abb_driver onto the host
+# ROS 2 graph over rosbridge. That bridge already publishes the real
+# /joint_states and exposes /arm_controller/follow_joint_trajectory
+# directly, so unlike sim_robot.launch.py
 # there is no controller_manager here and therefore no joint_state_broadcaster/
 # arm_controller/gripper_controller spawners to run -- those only exist to
 # talk to gz_ros2_control's in-sim controller_manager.
@@ -46,7 +46,7 @@ def generate_launch_description():
         description='ABB IRC5 controller IP (Robot Web Services endpoint for the gripper signal)',
     )
 
-    # Same use_octomap/octomap_resolution/octomap_file switch as gazebo.launch.py:
+    # Same use_octomap/octomap_resolution/octomap_file switch as sim_robot.launch.py:
     #   use_octomap:=true  -> live mapping from an RGBD point cloud on
     #     /camera/depth/color/points, fed by realsense_camera_node below
     #     (requires use_camera:=true, the default).
@@ -75,7 +75,7 @@ def generate_launch_description():
     )
 
     # Real D405 wrist camera. Configured to match the sim's RealSense-style
-    # topic contract (config/rgbd_bridge.yaml / gazebo.launch.py) exactly:
+    # topic contract (config/rgbd_bridge.yaml / sim_robot.launch.py) exactly:
     # camera_name/camera_namespace avoid the driver's default /camera/camera/...
     # double-nesting, and both optical frame ids are pinned to the URDF's
     # existing depth_camera_optical (urdf/irb140.urdf) -- the single combined
@@ -92,7 +92,7 @@ def generate_launch_description():
         ),
     )
 
-    # Process the xacro at launch time, same as abb_irb140.launch.py -- no
+    # Process the xacro at launch time, same as sim_robot.launch.py -- no
     # controllers_yaml mapping needed since there's no controller_manager here
     # to read it; the xacro's own xacro:arg default applies.
     xacro_path = os.path.join(pkg_share, 'urdf', 'irb140.xacro')

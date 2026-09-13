@@ -66,7 +66,7 @@
     <!-- ================================================================= -->
     <!-- Link/sensor/topic names are deliberately un-namespaced
          (depth_camera / rgbd_camera): config/rgbd_bridge.yaml and
-         launch/gazebo.launch.py refer to them by those fixed names. Only one
+         launch/sim_robot.launch.py refer to them by those fixed names. Only one
          gripper is ever instantiated, so there is no collision. -->
     <xacro:if value="$(arg include_camera)">
 
@@ -120,7 +120,7 @@
              worlds/robot_lab.world already loads gz-sim-sensors-system. gz
              publishes /rgbd_camera/{image,depth_image,points,camera_info};
              those are remapped to RealSense-style ROS 2 names by
-             config/rgbd_bridge.yaml in launch/gazebo.launch.py. -->
+             config/rgbd_bridge.yaml in launch/sim_robot.launch.py. -->
         <gazebo reference="depth_camera">
             <sensor name="rgbd_camera" type="rgbd_camera">
                 <always_on>1</always_on>

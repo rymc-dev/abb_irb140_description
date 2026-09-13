@@ -5,7 +5,7 @@
   <xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumatic_gripper.xacro"/>
 
   <!-- Path to the ros2_control controller config, consumed by the
-       gz_ros2_control plugin's <parameters> tag below. launch/gazebo.launch.py
+       gz_ros2_control plugin's <parameters> tag below. launch/sim_robot.launch.py
        overrides this with the resolved installed config/controllers.yaml. -->
   <xacro:arg name="controllers_yaml" default="$(find abb_irb140_description)/config/controllers.yaml"/>
 
@@ -36,7 +36,7 @@
     </collision>
     <!-- mass/inertia computed from the visual mesh geometry (tetrahedron
          decomposition, uniform density scaled so the 7 links sum to the
-         published IRB140 mass of ~98 kg); see scratchpad/compute_inertials.py -->
+         published IRB140 mass of ~98 kg) -->
     <inertial>
       <origin xyz="-0.067289 0.00033 0.049151" rpy="0 0 0"/>
       <mass value="26.383023"/>
@@ -366,7 +366,7 @@
 
   <!-- Brings up a controller_manager inside gz-sim once the entity is spawned.
        The controller config path comes from the controllers_yaml xacro arg
-       (see top of file); launch/gazebo.launch.py passes the resolved installed
+       (see top of file); launch/sim_robot.launch.py passes the resolved installed
        path since gz_ros2_control does not evaluate $(find pkg) itself. -->
   <gazebo>
     <plugin filename="gz_ros2_control-system"
