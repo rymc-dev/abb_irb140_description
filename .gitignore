@@ -9,6 +9,9 @@ __pycache__/
 # vscode 
 *.vscode
 
+# large videos
+docs/videos/*
+
 # Distribution / packaging
 .Python
 build/
