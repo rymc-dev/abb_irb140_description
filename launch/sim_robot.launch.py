@@ -140,15 +140,14 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
     )
 
-    pneumatic_gripper_controller_node = Node(
-        package='abb_irb140_description',
-        executable='pneumatic_gripper_controller',
-        name='pneumatic_gripper_controller',
-        output='screen',
-        parameters=[{
-            'sim': True,
-        }],
-    )
+    # No pneumatic_gripper_controller_node here: gz_ros2_control's own
+    # gripper_controller (position_controllers/GripperActionController,
+    # spawned below as gripper_controller_spawner) already serves the
+    # control_msgs/action/GripperCommand action at gripper_controller/gripper_cmd
+    # that pneumatic_gripper_controller hosts on the real robot (see
+    # real_robot.launch.py and src/pneumatic_gripper_controller.cpp) -- MoveIt's
+    # controller manager (moveit_controllers.yaml) drives that action directly,
+    # so there's nothing left for this node to do in sim.
 
     # Bridges the rgbd_camera sensor (defined on the depth_camera link in
     # irb140.urdf) from gz-sim into ROS 2 under RealSense-style topic names.
@@ -301,5 +300,4 @@ def generate_launch_description():
         delay_joint_state_broadcaster,
         delay_arm_controller,
         delay_gripper_controller,
-        pneumatic_gripper_controller_node,
     ])

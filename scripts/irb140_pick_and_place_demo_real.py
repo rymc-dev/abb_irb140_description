@@ -3,8 +3,7 @@ import rclpy
 from rclpy.node import Node
 import asyncio
 from action_msgs.msg import GoalStatus
-from control_msgs.action import FollowJointTrajectory
-from std_srvs.srv import SetBool
+from control_msgs.action import FollowJointTrajectory, GripperCommand
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from builtin_interfaces.msg import Duration
@@ -12,6 +11,13 @@ from rclpy.action import ActionClient
 from rclpy.executors import MultiThreadedExecutor
 
 JOINT_NAMES = ["joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"]
+
+# Matches pneumatic_gripper_controller's open_position/closed_position
+# defaults (include/pneumatic_gripper_controller.hpp) -- the action server
+# only cares which of the two a goal's position is nearer to, not its exact
+# value, but these keep the demo's intent explicit.
+GRIPPER_OPEN_POSITION = 0.0
+GRIPPER_CLOSED_POSITION = -0.0698
 
 # Real joint-space waypoints, captured from the live robot via
 # `ros2 topic echo /joint_states --once` while jogging it by hand.
@@ -73,7 +79,12 @@ class PickAndPlaceDemoNode(Node):
             FollowJointTrajectory,
             "/arm_controller/follow_joint_trajectory"
         )
-        self.gripper_trigger_cli = self.create_client(SetBool, "/gripper_trigger")
+        # Same GripperCommand action MoveIt's controller manager drives
+        # (moveit_controllers.yaml), served on the real robot by
+        # pneumatic_gripper_controller's action server.
+        self.gripper_cmd_cli = ActionClient(
+            self, GripperCommand, "/gripper_controller/gripper_cmd"
+        )
 
         # Latest /joint_states, name -> position, used to detect "arrived
         # within tolerance" ourselves rather than only trusting the
@@ -220,19 +231,42 @@ class PickAndPlaceDemoNode(Node):
         )
 
     async def set_gripper(self, closed: bool) -> bool:
-        """Call /gripper_trigger to open (False) or close (True) the gripper."""
+        """Send a GripperCommand goal to open (False) or close (True) the
+        gripper via pneumatic_gripper_controller's action server."""
         action = "Closing" if closed else "Opening"
         self.get_logger().info(f"{action} gripper...")
 
-        request = SetBool.Request(data=closed)
-        response_future = self.gripper_trigger_cli.call_async(request)
-        response = await self._rclpy_future_to_asyncio(response_future)
+        goal = GripperCommand.Goal()
+        goal.command.position = (
+            GRIPPER_CLOSED_POSITION if closed else GRIPPER_OPEN_POSITION
+        )
+        goal.command.max_effort = 0.0
 
-        if not response.success:
-            self.get_logger().error(f"Gripper trigger failed: {response.message}")
+        send_goal_future = self.gripper_cmd_cli.send_goal_async(goal)
+        goal_handle = await self._rclpy_future_to_asyncio(send_goal_future)
+
+        if not goal_handle.accepted:
+            self.get_logger().error("Gripper goal rejected!")
             return False
 
-        self.get_logger().info(f"Gripper trigger succeeded: {response.message}")
+        result_wrapper = await self._rclpy_future_to_asyncio(
+            goal_handle.get_result_async()
+        )
+        result = result_wrapper.result
+
+        if (
+            result_wrapper.status != GoalStatus.STATUS_SUCCEEDED
+            or not result.reached_goal
+        ):
+            self.get_logger().error(
+                f"Gripper {action.lower()} failed (status={result_wrapper.status}, "
+                f"reached_goal={result.reached_goal})"
+            )
+            return False
+
+        self.get_logger().info(
+            f"Gripper {action.lower()} succeeded (position={result.position:.4f})."
+        )
         return True
 
     async def run_pick_sequence(self) -> bool:
@@ -300,22 +334,22 @@ async def main():
         asyncio.to_thread(executor.spin)
     )
 
-    # Wait for the arm action server and the gripper service
+    # Wait for the arm and gripper action servers
     if not node.follow_joint_trajectory_cli.wait_for_server(timeout_sec=10.0):
-        node.get_logger().error("Action server not available!")
+        node.get_logger().error("Arm action server not available!")
         executor.shutdown()
         rclpy.shutdown()
         return
 
-    node.get_logger().info("Action server is available")
+    node.get_logger().info("Arm action server is available")
 
-    if not node.gripper_trigger_cli.wait_for_service(timeout_sec=10.0):
-        node.get_logger().error("Gripper trigger service not available!")
+    if not node.gripper_cmd_cli.wait_for_server(timeout_sec=10.0):
+        node.get_logger().error("Gripper action server not available!")
         executor.shutdown()
         rclpy.shutdown()
         return
 
-    node.get_logger().info("Gripper trigger service is available")
+    node.get_logger().info("Gripper action server is available")
     await asyncio.sleep(0.5)
 
     # Run the pick sequence

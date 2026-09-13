@@ -12,32 +12,35 @@
 #include <rclcpp/timer.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
-#include <std_srvs/srv/set_bool.hpp>
 
 /**
  * ROS 2 node that drives the ABB IRB140 pneumatic gripper.
  *
- * It exposes a `SetBool` service (`~/gripper_trigger`) and, on each request,
- * toggles a digital output signal on the ABB controller through the Robot Web
- * Services (RWS) REST API using HTTP digest authentication.
+ * On the real robot (`sim` false, the default) it hosts a
+ * `control_msgs/action/GripperCommand` action server at
+ * `gripper_controller/gripper_cmd` -- the exact controller name/action
+ * namespace `abb_irb140_moveit_config/config/moveit_controllers.yaml`
+ * declares for the gripper, so MoveIt's controller manager can drive the
+ * real gripper the same way it already drives the simulated one. On each
+ * accepted goal it toggles a digital output signal on the ABB controller
+ * through the Robot Web Services (RWS) REST API using HTTP digest
+ * authentication:
  *
- *   data = true  -> lvalue 1 -> close gripper
- *   data = false -> lvalue 0 -> open gripper
+ *   goal position nearer closed_position_ -> lvalue 1 -> close gripper
+ *   goal position nearer open_position_   -> lvalue 0 -> open gripper
  *
- * When the `sim` parameter is true the HTTP call is skipped; instead the
- * request is forwarded as a `control_msgs/action/GripperCommand` goal to
- * the Gazebo `gripper_controller` (see config/controllers.yaml), so the same
- * `/gripper_trigger` interface drives the real controller or the simulated
- * one. The service responds as soon as the goal is accepted (fire-and-forget)
- * without waiting for the simulated fingers to finish moving, mirroring how
- * the real-robot branch only confirms the HTTP signal was set.
+ * In simulation (`sim` true, set by `sim_robot.launch.py`) this node does
+ * nothing: gz_ros2_control's own `gripper_controller`
+ * (position_controllers/GripperActionController, see config/controllers.yaml)
+ * already serves that identical action name, so it isn't launched there --
+ * see sim_robot.launch.py.
  *
- * On the real robot (`sim` false) nothing else publishes joint states for the
- * 12 pneumatic gripper finger joints (in sim, gz_ros2_control +
+ * On the real robot nothing else publishes joint states for the 12
+ * pneumatic gripper finger joints (in sim, gz_ros2_control +
  * joint_state_broadcaster do). So when `sim` is false this node also mocks
  * those joint states on /joint_states: every finger joint sits at
- * `open_position` until a close command succeeds, then at `closed_position`
- * until an open command succeeds. robot_state_publisher merges this with the
+ * `open_position` until a close goal succeeds, then at `closed_position`
+ * until an open goal succeeds. robot_state_publisher merges this with the
  * arm joint states coming from the ABB bridge.
  */
 class PneumaticGripperController : public rclcpp::Node
@@ -46,6 +49,9 @@ public:
   PneumaticGripperController();
 
 private:
+  using GripperCommand = control_msgs::action::GripperCommand;
+  using GoalHandleGripperCommand = rclcpp_action::ServerGoalHandle<GripperCommand>;
+
   // --- Fixed controller configuration ------------------------------------
   static constexpr const char * DEFAULT_ROBOT_IP = "192.168.125.1";
   static constexpr double DEFAULT_GRIPPER_EFFORT_PERCENTAGE = 50.0;
@@ -53,8 +59,11 @@ private:
   static constexpr const char * PASSWORD = "robotics";
   static constexpr const char * SIGNAL_NAME = "closeGrippersOut";
   static constexpr double TIMEOUT = 5.0;
+  // Matches moveit_controllers.yaml's gripper_controller name + gripper_cmd
+  // action_ns, and gz_ros2_control's GripperActionController in sim (see
+  // config/controllers.yaml) -- one action name, same interface, either
+  // backend.
   static constexpr const char * GRIPPER_ACTION_NAME = "gripper_controller/gripper_cmd";
-  static constexpr double GRIPPER_ACTION_SERVER_WAIT = 1.0;  // seconds
 
   // Mocked finger joint state (only published when `sim` is false).
   static constexpr double DEFAULT_OPEN_POSITION = 0.0;
@@ -92,36 +101,40 @@ private:
   // false = open, true = closed. Flipped only on a successful RWS send.
   std::atomic<bool> gripper_closed_{false};
 
-  // --- Service -------------------------------------------------------
-  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr gripper_trigger_srv_;
-
-  // --- Sim gripper action client (sim only) ---------------------------
-  rclcpp_action::Client<control_msgs::action::GripperCommand>::SharedPtr
-    gripper_action_client_;
+  // --- Gripper action server (real robot only) ------------------------
+  rclcpp_action::Server<GripperCommand>::SharedPtr gripper_action_server_;
 
   // --- Mocked joint state publishing (real robot only) ----------------
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_;
   rclcpp::TimerBase::SharedPtr joint_state_timer_;
 
-  /// Service callback: opens or closes the gripper based on request.data.
-  void gripper_trigger_cb(
-    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
-    std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+  /// Accepts every goal -- there's nothing to validate on a two-position
+  /// pneumatic gripper.
+  rclcpp_action::GoalResponse handle_goal(
+    const rclcpp_action::GoalUUID & uuid,
+    std::shared_ptr<const GripperCommand::Goal> goal);
+
+  /// Rejects cancellation: the RWS HTTP call each goal makes is a single
+  /// short (<= TIMEOUT s) blocking request with nothing to interrupt
+  /// partway through.
+  rclcpp_action::CancelResponse handle_cancel(
+    const std::shared_ptr<GoalHandleGripperCommand> goal_handle);
+
+  /// Hands the goal off to a detached worker thread so the blocking RWS
+  /// call in execute_gripper_goal() never stalls the node's executor.
+  void handle_accepted(const std::shared_ptr<GoalHandleGripperCommand> goal_handle);
+
+  /**
+   * Worker-thread goal execution: decides open vs. close from whichever of
+   * open_position_/closed_position_ the goal's requested position is nearer
+   * to, sends the RWS signal, then succeeds or aborts the goal with the
+   * outcome.
+   */
+  void execute_gripper_goal(const std::shared_ptr<GoalHandleGripperCommand> goal_handle);
 
   /// Timer callback: publishes the 12 finger joints on /joint_states, all at
   /// closed_position_ when gripper_closed_ is set, otherwise open_position_.
   void publish_gripper_joint_states();
-
-  /**
-   * Sim-mode gripper trigger: forwards the request as a GripperCommand goal
-   * to gripper_action_client_ and responds as soon as the goal is accepted
-   * (fire-and-forget -- does not wait for the fingers to finish moving).
-   *
-   * @param close     true to close the gripper, false to open it.
-   * @param response  [out] SetBool response to fill in before returning.
-   */
-  void send_sim_gripper_goal(
-    bool close, std::shared_ptr<std_srvs::srv::SetBool::Response> response);
 
   /**
    * POST `lvalue` to the RWS signal endpoint using HTTP digest auth.

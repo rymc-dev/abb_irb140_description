@@ -24,7 +24,12 @@ from launch_ros.parameter_descriptions import ParameterValue
 # The gripper has no equivalent in abb_driver (it's a pneumatic on/off signal,
 # not a ros2_control joint), so it's driven here by the pneumatic_gripper_controller
 # node (src/pneumatic_gripper_controller.cpp) in its real mode (sim:=false, the
-# node's own default): it opens/closes the gripper via the ABB controller's
+# node's own default): it hosts a control_msgs/action/GripperCommand action
+# server at gripper_controller/gripper_cmd -- the same action name/type
+# abb_irb140_moveit_config's moveit_controllers.yaml already expects, so
+# MoveIt's controller manager can drive the real gripper directly, the same
+# way it drives the simulated one via gz_ros2_control's GripperActionController.
+# On each accepted goal it opens/closes the gripper via the ABB controller's
 # Robot Web Services REST API and mocks the 12 finger joints' /joint_states
 # (nothing else publishes them on the real robot). robot_state_publisher below
 # merges those with the bridge's arm /joint_states into full TF.

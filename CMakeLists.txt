@@ -9,14 +9,13 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
-find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(control_msgs REQUIRED)
 find_package(CURL REQUIRED)
 
 add_executable(pneumatic_gripper_controller src/pneumatic_gripper_controller.cpp)
 target_include_directories(pneumatic_gripper_controller PRIVATE include)
-ament_target_dependencies(pneumatic_gripper_controller rclcpp rclcpp_action std_srvs sensor_msgs control_msgs)
+ament_target_dependencies(pneumatic_gripper_controller rclcpp rclcpp_action sensor_msgs control_msgs)
 target_link_libraries(pneumatic_gripper_controller CURL::libcurl)
 
 install(TARGETS pneumatic_gripper_controller

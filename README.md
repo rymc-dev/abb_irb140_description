@@ -12,7 +12,7 @@ place with the IRB140.
 
 <p align="center">
   <img src="docs/images/rviz_overview.png" alt="RViz view of the IRB140 with TF frames, the wrist RGBD point cloud and the octomap overlay" width="45%">
-  <img src="docs/images/gazebo_world.png" alt="Gazebo world model: IRB140 on its podium next to the lab table" width="45%">
+  <img src="docs/images/robot_lab.world.png" alt="Gazebo world model: IRB140 on its podium next to the lab table" width="45%">
 </p>
 
 > **Note:** the images above are placeholders — screenshots of the RViz and
@@ -41,8 +41,9 @@ other with minimal changes:
 
 - `/arm_controller/follow_joint_trajectory` — `control_msgs/action/FollowJointTrajectory`
   for the 6 arm joints (`joint_1` … `joint_6`).
-- `/gripper_trigger` — `std_srvs/srv/SetBool` to open/close the pneumatic
-  gripper (`data: true` closes, `false` opens).
+- `/gripper_controller/gripper_cmd` — `control_msgs/action/GripperCommand` to
+  open/close the pneumatic gripper — the same action MoveIt's controller
+  manager drives, real or simulated.
 - `/camera/color/...`, `/camera/depth/...` — RealSense-style RGBD topics from
   the wrist camera, real or simulated.
 - `/joint_states`, `/tf` — full robot state, merged from whichever backend is
@@ -119,8 +120,9 @@ the wrist RGBD camera onto RealSense-style topics, and opens RViz.
 ros2 launch abb_irb140_description real_robot.launch.py
 ```
 
-Starts `robot_state_publisher`, the pneumatic gripper controller (in its
-real, RWS-backed mode), RViz, and — if `use_camera:=true` (default) — the
+Starts `robot_state_publisher`, the pneumatic gripper controller (hosting the
+`GripperCommand` action server in its real, RWS-backed mode), RViz, and — if
+`use_camera:=true` (default) — the
 real D405 driver plus the static transforms that graft its optical frames
 onto the URDF. This launch file does **not** start `controller_manager` or
 any arm controller: the arm's `/joint_states` and
@@ -152,20 +154,26 @@ ros2 action send_goal /arm_controller/follow_joint_trajectory control_msgs/actio
 
 ## Gripper control
 
-The gripper is pneumatic (on/off), not a `ros2_control` joint, so it's driven
-through its own `pneumatic_gripper_controller` node (`src/pneumatic_gripper_controller.cpp`)
-via a single `std_srvs/srv/SetBool` service:
+The gripper is pneumatic (on/off), not a `ros2_control` joint, but it's
+driven through the same `control_msgs/action/GripperCommand` action —
+`/gripper_controller/gripper_cmd` — either way, which is also exactly the
+controller name/action namespace `abb_irb140_moveit_config`'s
+`moveit_controllers.yaml` declares for the gripper, so MoveIt's controller
+manager can drive it directly on both backends without any extra glue:
 
 ```bash
 # Close
-ros2 service call /gripper_trigger std_srvs/srv/SetBool "{data: true}"
+ros2 action send_goal /gripper_controller/gripper_cmd control_msgs/action/GripperCommand "{command: {position: -0.0698, max_effort: 0.0}}"
 # Open
-ros2 service call /gripper_trigger std_srvs/srv/SetBool "{data: false}"
+ros2 action send_goal /gripper_controller/gripper_cmd control_msgs/action/GripperCommand "{command: {position: 0.0, max_effort: 0.0}}"
 ```
 
-- **Real robot** (`sim:=false`, the node's default): sets the ABB
-  controller's `closeGrippersOut` digital output signal over Robot Web
-  Services (RWS) using HTTP digest auth
+- **Real robot** (`sim:=false`, the default): the action server is hosted by
+  `pneumatic_gripper_controller` (`src/pneumatic_gripper_controller.cpp`).
+  On each accepted goal it decides open vs. close from whichever of
+  `open_position`/`closed_position` the requested position is nearer to,
+  then sets the ABB controller's `closeGrippersOut` digital output signal
+  over Robot Web Services (RWS) using HTTP digest auth
   (`http://<robot_ip>/rw/iosystem/signals/closeGrippersOut?action=set`,
   `lvalue=1` to close / `lvalue=0` to open), then mocks the 12 finger joints'
   `/joint_states` (nothing else publishes them on the real robot). The
@@ -173,9 +181,11 @@ ros2 service call /gripper_trigger std_srvs/srv/SetBool "{data: false}"
   defaults, not secrets specific to this cell — change them in
   `include/pneumatic_gripper_controller.hpp` if your controller's RWS user
   has been reconfigured.
-- **Simulation** (`sim:=true`, set by `sim_robot.launch.py`): forwards the
-  request as a `control_msgs/action/GripperCommand` goal to the Gazebo
-  `gripper_controller` instead, so the same service drives either backend.
+- **Simulation** (`sim_robot.launch.py`): the action is already served by
+  `gz_ros2_control`'s own `gripper_controller`
+  (`position_controllers/GripperActionController`, see
+  `config/controllers.yaml`), so `pneumatic_gripper_controller` isn't
+  launched at all in sim — there's nothing left for it to do.
 
 ## Octomapping
 
