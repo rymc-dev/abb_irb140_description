@@ -65,6 +65,35 @@
     <model name="my_sphere">
       <pose>0.705 0 1.15 0 0 0</pose>
       <link name="sphere_link">
+        <!-- Tried and measured to have NO effect: gz-sim's DART-based
+             physics (this world's engine) appears not to implement
+             <velocity_decay> at all -- a real post-collision rolling ball's
+             velocity was numerically identical with and without this tag
+             present (~constant deceleration across a 10s window either
+             way). It's a Gazebo-Classic/ODE-era SDF element; left here
+             (harmless either way) as a note for whoever looks at this next
+             rather than something to keep chasing -- see the inertia
+             comment above for the other approach that was tried instead
+             and reverted for destabilizing the contact solver. Bottom
+             line: this engine has no working built-in way found so far to
+             make a nudged/rolling ball self-stop in reasonable time; the
+             practical mitigation is sim_reset_service.py's respawn_ball
+             service (teleport it back rather than wait for physics). -->
+        <velocity_decay>
+          <linear>0.3</linear>
+          <angular>0.3</angular>
+        </velocity_decay>
+        <!-- Reverted: raising mass to 2.0kg (inertia 0.02) made a grasp
+             ATTEMPT catastrophic instead of better -- the gripper fingers'
+             CLOSED joint position was apparently already deep enough into
+             the original 0.03m-radius ball's collision geometry to cause
+             solver interpenetration-correction on contact, and the changed
+             mass/inertia turned that from "a few cm of unwanted drift" into
+             the ball being launched ~14m away. Back to the original,
+             empirically-stable 0.5kg / 0.4 inertia; addressing the
+             interpenetration itself instead by shrinking the ball (see the
+             collision radius below) rather than changing how it responds
+             to being hit. -->
         <inertial>
           <mass>0.5</mass>
           <inertia>
@@ -73,17 +102,43 @@
             <izz>0.4</izz>
           </inertia>
         </inertial>
+        <!-- Radius shrunk 0.03 -> 0.02m at the user's direction: the
+             gripper's fixed CLOSED joint position was apparently already
+             deep enough into a 0.03m-radius ball to cause solver
+             interpenetration-correction on contact (see the inertial
+             comment above -- this is the actual root cause the mass/
+             inertia experiment was really fighting). A smaller ball gives
+             the closed fingers more clearance, addressing that directly. -->
         <collision name="sphere_collision">
           <geometry>
             <sphere>
-              <radius>0.03</radius>
+              <radius>0.02</radius>
             </sphere>
           </geometry>
+          <!-- Without rolling (torsional) friction, gz-physics never damps a
+               sphere's spin -- any contact nudge (e.g. a near-miss grasp
+               attempt brushing it) sends it rolling indefinitely, since
+               plain sliding friction (mu/mu2) alone doesn't resist rolling
+               a round shape at all. This is what was causing the ball to
+               drift/roll away between pick attempts. -->
+          <surface>
+            <friction>
+              <ode>
+                <mu>1.0</mu>
+                <mu2>1.0</mu2>
+              </ode>
+              <torsional>
+                <coefficient>1.0</coefficient>
+                <use_patch_radius>true</use_patch_radius>
+                <patch_radius>0.02</patch_radius>
+              </torsional>
+            </friction>
+          </surface>
         </collision>
         <visual name="sphere_visual">
           <geometry>
             <sphere>
-              <radius>0.03</radius>
+              <radius>0.02</radius>
             </sphere>
           </geometry>
           <material>
@@ -106,6 +161,18 @@
       <uri>model://abb_irb140_description/models/robot_lab_table</uri>
       <name>robot_lab_table</name>
       <pose>1.179 0 0 0 0 0</pose>
+    </include>
+
+    <!-- hybraut_irb140 hand_eye_calibrate.py's fixed calibration target --
+         see models/aruco_calibration_marker/model.sdf. Pose is an estimate
+         (table-surface height approximated from my_sphere's resting pose
+         above, offset in Y so it doesn't sit under the ball) -- re-check/
+         adjust in Gazebo so it actually sits flush on the table surface and
+         stays in view across calibration_poses_flat_rad. -->
+    <include>
+      <uri>model://abb_irb140_description/models/aruco_calibration_marker</uri>
+      <name>aruco_calibration_marker</name>
+      <pose>0.75 0.15 1.068 0 0 0</pose>
     </include>
   </world>
 </sdf>

@@ -38,9 +38,9 @@
       </material>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0.0165 0 -0.005"/>
+      <origin rpy="0 0 0" xyz="0 0 -0.03105"/>
       <geometry>
-        <box size="0.1 0.125 0.062"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>

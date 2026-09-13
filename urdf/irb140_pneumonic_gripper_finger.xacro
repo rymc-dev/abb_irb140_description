@@ -61,9 +61,8 @@
                 <material name="offwhite"/>
             </visual>
             <collision>
-                <origin xyz="0 0.005 0.009" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.025 0.03 0.022"/>
+                    <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_1.stl" scale="${mesh_scale}"/>
                 </geometry>
             </collision>
             <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.022" density="${silicone_density}">
@@ -79,9 +78,8 @@
                 <material name="offwhite"/>
             </visual>
             <collision>
-                <origin xyz="0 0 0.025" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.025 0.03 0.011"/>
+                    <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_2.stl" scale="${mesh_scale}"/>
                 </geometry>
             </collision>
             <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
@@ -97,9 +95,8 @@
                 <material name="offwhite"/>
             </visual>
             <collision>
-                <origin xyz="0 0 0.035" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.025 0.03 0.011"/>
+                    <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_3.stl" scale="${mesh_scale}"/>
                 </geometry>
             </collision>
             <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
@@ -115,9 +112,8 @@
                 <material name="offwhite"/>
             </visual>
             <collision>
-                <origin xyz="0 0 0.055" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.025 0.03 0.011"/>
+                    <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_4.stl" scale="${mesh_scale}"/>
                 </geometry>
             </collision>
             <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
@@ -133,9 +129,8 @@
                 <material name="offwhite"/>
             </visual>
             <collision>
-                <origin xyz="0 0 0.065" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.025 0.03 0.011"/>
+                    <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_5.stl" scale="${mesh_scale}"/>
                 </geometry>
             </collision>
             <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
@@ -151,9 +146,8 @@
                 <material name="offwhite"/>
             </visual>
             <collision>
-                <origin xyz="0 0 0.075" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.025 0.03 0.011"/>
+                    <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_6.stl" scale="${mesh_scale}"/>
                 </geometry>
             </collision>
             <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
@@ -169,9 +163,8 @@
                 <material name="offwhite"/>
             </visual>
             <collision>
-                <origin xyz="0 0 0.085" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.025 0.03 0.011"/>
+                    <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_7.stl" scale="${mesh_scale}"/>
                 </geometry>
             </collision>
             <xacro:solid_box_inertial sx="0.025" sy="0.03" sz="0.011" density="${silicone_density}">
