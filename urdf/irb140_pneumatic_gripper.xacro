@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pneumatic_gripper">
 
-<xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumonic_gripper_finger.xacro"/>
+<xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumatic_gripper_finger.xacro"/>
 
 <!-- Set include_camera:=false at xacro time to drop the wrist RGBD camera. -->
 <xacro:arg name="include_camera" default="true"/>
@@ -26,7 +26,7 @@
         <visual>
             <origin xyz="0 0 -0.03105" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="plastic">
                 <color rgba="0.11 0.11 0.11 1"/>
@@ -36,7 +36,7 @@
         <collision>
             <origin rpy="0 0 0" xyz="0 0 -0.03105"/>
             <geometry>
-                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
 

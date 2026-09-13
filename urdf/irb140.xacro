@@ -2,7 +2,7 @@
 
 <robot xmlns:xacro="https://www.ros.org/wiki/xacro" name="abb_irb140"> 
 
-  <xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumonic_gripper.xacro"/>
+  <xacro:include filename="$(find abb_irb140_description)/urdf/irb140_pneumatic_gripper.xacro"/>
 
   <!-- Path to the ros2_control controller config, consumed by the
        gz_ros2_control plugin's <parameters> tag below. launch/gazebo.launch.py
@@ -301,14 +301,14 @@
     <!-- Pneumatic gripper. Only the left finger's first joint is a real
          driver (position command interface); the other 11 finger joints are
          declared mimic="true" here and carry <mimic> elements in
-         irb140_pneumonic_gripper_finger.xacro, so a single
+         irb140_pneumatic_gripper_finger.xacro, so a single
          GripperActionController (config/controllers.yaml: gripper_controller)
          opens/closes both fingers. Mimic joints may only export state
          interfaces. -->
     <joint name="pneumatic_gripper_left_link_1_to_link_2">
       <!-- Software travel limit for the driver joint: -0.0698 ("closed") is
            deliberately kept 0.02 rad inside the -0.09 mechanical joint limit
-           (see irb140_pneumonic_gripper_finger.xacro) so a closed gripper is
+           (see irb140_pneumatic_gripper_finger.xacro) so a closed gripper is
            resting, not pegged on the hard stop; opening from closed is then
            a free move the weak position gain can complete without stalling. -->
       <command_interface name="position">

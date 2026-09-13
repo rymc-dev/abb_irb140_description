@@ -227,7 +227,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 -0.03105"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="plastic">
         <color rgba="0.11 0.11 0.11 1"/>
@@ -236,7 +236,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 -0.03105"/>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/ABBIRB140_EndEffector.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -248,13 +248,13 @@
   <link name="pneumatic_gripper_left_link_1">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -266,13 +266,13 @@
   <link name="pneumatic_gripper_left_link_2">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -284,13 +284,13 @@
   <link name="pneumatic_gripper_left_link_3">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -302,13 +302,13 @@
   <link name="pneumatic_gripper_left_link_4">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -320,13 +320,13 @@
   <link name="pneumatic_gripper_left_link_5">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -338,13 +338,13 @@
   <link name="pneumatic_gripper_left_link_6">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -356,13 +356,13 @@
   <link name="pneumatic_gripper_left_link_7">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -434,13 +434,13 @@
   <link name="pneumatic_gripper_right_link_1">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -452,13 +452,13 @@
   <link name="pneumatic_gripper_right_link_2">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -470,13 +470,13 @@
   <link name="pneumatic_gripper_right_link_3">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -488,13 +488,13 @@
   <link name="pneumatic_gripper_right_link_4">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -506,13 +506,13 @@
   <link name="pneumatic_gripper_right_link_5">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -524,13 +524,13 @@
   <link name="pneumatic_gripper_right_link_6">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -542,13 +542,13 @@
   <link name="pneumatic_gripper_right_link_7">
     <visual>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="offwhite"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumonic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://abb_irb140_description/meshes/abb_irb140_pneumatic_end_effector/visual/finger_visual/visual/link_7.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -784,14 +784,14 @@
     <!-- Pneumatic gripper. Only the left finger's first joint is a real
          driver (position command interface); the other 11 finger joints are
          declared mimic="true" here and carry <mimic> elements in
-         irb140_pneumonic_gripper_finger.xacro, so a single
+         irb140_pneumatic_gripper_finger.xacro, so a single
          GripperActionController (config/controllers.yaml: gripper_controller)
          opens/closes both fingers. Mimic joints may only export state
          interfaces. -->
     <joint name="pneumatic_gripper_left_link_1_to_link_2">
       <!-- Software travel limit for the driver joint: -0.0698 ("closed") is
            deliberately kept 0.02 rad inside the -0.09 mechanical joint limit
-           (see irb140_pneumonic_gripper_finger.xacro) so a closed gripper is
+           (see irb140_pneumatic_gripper_finger.xacro) so a closed gripper is
            resting, not pegged on the hard stop; opening from closed is then
            a free move the weak position gain can complete without stalling. -->
       <command_interface name="position">
